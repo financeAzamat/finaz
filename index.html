@@ -68,13 +68,19 @@
     .hero{position:relative;overflow:hidden;min-height:96vh;display:grid;align-items:center;color:var(--paper);background:radial-gradient(120% 120% at 78% 12%,rgba(42,49,48,.9) 0%,rgba(26,29,31,.9) 46%,rgba(20,22,24,.9) 100%)}
     /* accent aurora bloom — the Palantir "glow" tell */
     .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(42% 55% at 82% 22%,rgba(43,89,69,.5),transparent 68%);pointer-events:none;transform:translateY(var(--drift,0))}
-    /* Copy sits above the aurora ::after. */
+    /* Layer order in the hero: gradient (element bg) < aurora ::after <
+       dot-field canvas (z1) < copy (z2). */
+    #hero-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
+    /* Copy sits above the aurora ::after and the dot canvas. */
     .hero .wrap{position:relative;z-index:2}
     /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
     .hero h1{max-width:19ch}
     .hero .lede{color:rgba(255,255,255,.82);font-size:clamp(1.05rem,2.4vw,1.2rem);margin-top:var(--space-s);max-width:56ch}
     .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
     .kicker{font-family:var(--font-text);color:#fff;opacity:.7;margin-bottom:var(--space-s)}
+    /* Hero kicker is bumped off the 10px caption tier - it reads as a
+       standfirst above the H1, not a micro-label. */
+    .hero .kicker{font-size:.82rem;letter-spacing:.14em;opacity:.78}
 
     /* Sections + smooth seams between blocks */
     .section{padding-block:var(--section-v);position:relative}
@@ -101,6 +107,18 @@
     .lead{font-size:var(--lede);line-height:1.5;color:var(--ink);max-width:60ch;margin-bottom:var(--space-s)}
     .section--dark .lead{color:#fff}
     .section-note{font-size:.95rem;max-width:62ch}
+
+    /* Founder card: portrait + short bio. The <img> currently points at a
+       silhouette placeholder data-URI; drop his photo in at
+       images/azamat.jpg and swap the src (portrait crop, ~4:5). */
+    .founder{display:flex;gap:var(--space-m);align-items:center;margin-top:var(--space-m);flex-wrap:wrap}
+    .founder-photo{flex:none;width:154px;height:192px;border-radius:4px;overflow:hidden;
+      border:1px solid var(--line);background:var(--paper-soft)}
+    .founder-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .founder-bio{flex:1;min-width:260px}
+    .founder-name{color:var(--ink);font-weight:600;font-family:"Manrope",var(--font-display);
+      margin-bottom:.5em;font-size:1.05rem}
+    .founder-bio p{font-size:.95rem;max-width:52ch}
 
     /* Numbered items */
     /* items sit on the column grid, separated by hairlines not just air */
@@ -292,6 +310,11 @@
       .items,.ex,.stack{gap:var(--space-s)}
       .draft-flag{font-size:.62rem;bottom:8px;right:8px}
       footer .wrap{justify-content:center;text-align:center}
+      /* One CTA on mobile. The fixed nav button is the single "Обсудить
+         задачу" and it stays put while scrolling; the hero's own button is
+         a duplicate on a small screen, so hide it here only. */
+      .hero .cta{display:none}
+      .founder-photo{width:120px;height:150px}
     }
   </style>
 </head>
@@ -339,9 +362,10 @@
   </nav>
 
   <header class="hero">
-    <!-- No generated visual here: the hero is the dark gradient plus the
-         aurora bloom and the type. Every drawn version of this (mesh,
-         then the LLM-flow diagram) competed with the headline. -->
+    <!-- Dot-field canvas: sparse pulsing points, weighted to the right half
+         so they never sit under the headline (see hero.js). Sits above the
+         gradient and aurora, below the copy (z-index below). -->
+    <canvas id="hero-dots" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-copy">
         <p class="kicker reveal">ИИ-решения для бизнеса</p>
@@ -364,7 +388,7 @@
       <div class="items">
         <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Помогаем выбрать ключевые области, где ИИ даст наилучший результат. Анализируем, подбираем сценарии применения и встраиваем технологии в текущие бизнес-процессы.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-chip"/></svg></span><span class="num">[02]</span><h3>Искусственный интеллект для бизнеса</h3><p>Разрабатываем и внедряем решения на основе LLM и ИИ, привязанные к ROI: агентов, чат-ботов, системы прогнозирования и видеоаналитику.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-chart"/></svg></span><span class="num">[03]</span><h3>Аналитика и прогнозирование</h3><p>Прогнозирование спроса, управление запасами (F&amp;R), ценообразование. Внедряем аналитические системы там, где ручной расчёт уже не тянет объём данных.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chart"/></svg></span><span class="num">[03]</span><h3>Аналитика и прогнозирование</h3><p>Прогнозирование спроса, управление запасами, ценообразование. Внедряем аналитические системы там, где ручной расчёт уже не тянет объём данных.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[04]</span><h3>Аудит и внедрение под ключ</h3><p>Ведём проект от идеи до внедрения: технический аудит, анализ рисков, пути оптимизации. Честно говорим, где узкое место и что даст эффект первым.</p></div>
       </div>
 
@@ -419,10 +443,10 @@
         <div class="item reveal"><span class="ico"><svg><use href="#i-chat"/></svg></span><span class="num">[02]</span><h3>Решения на базе LLM</h3><p>Чат-боты и ассистенты, поиск по документам (RAG), анализ тональности, распознавание речи - под конкретный процесс.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-plug"/></svg></span><span class="num">[03]</span><h3>Интеграция в ваши системы</h3><p>Бесшовное подключение к корпоративным системам без простоев - модель работает внутри вашего контура.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-database"/></svg></span><span class="num">[04]</span><h3>Данные и инфраструктура</h3><p>Подготовка, очистка и аугментация датасетов. Развёртывание в облаке или on-premise, DevOps-поддержка.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-lock"/></svg></span><span class="num">[05]</span><h3>Безопасность и комплаенс</h3><p>Защита данных и моделей, соответствие требованиям (152-ФЗ), мониторинг и обнаружение дрейфа. Open-source модели (Сайга, Вихрь, RuAdapt) для данных, которые нельзя вывозить наружу.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-lock"/></svg></span><span class="num">[05]</span><h3>Безопасность и комплаенс</h3><p>Защита данных и моделей, соответствие требованиям (152-ФЗ), мониторинг и обнаружение дрейфа.</p></div>
       </div>
 
-      <h3 class="subhead reveal">Что решают на LLM</h3>
+      <h3 class="subhead reveal">Примеры решений на основе LLM</h3>
       <div class="ex">
         <div class="card reveal"><span class="tag">Отзывы</span><h3>Анализ отзывов и тональности</h3><p>Обработка тысяч отзывов: тональность, категоризация, ключевые тренды. Снимает ручные операции и подсвечивает, что чинить в продукте и сервисе.</p></div>
         <div class="card reveal"><span class="tag">HR-аналитика</span><h3>Аналитика опросов сотрудников</h3><p>Автоматическая обработка обратной связи: тональность, ключевые темы, детализированный отчёт в дашборде.</p></div>
@@ -442,7 +466,7 @@
       <p class="eyebrow reveal">Внедрение</p>
       <h2 class="reveal">От задачи до работающего MVP</h2>
       <p class="lead reveal">Внедрим пилотный ИИ проект от задачи до работающего MVP
-        за 10 дней.</p>
+        за 14 дней.</p>
       <div class="items">
         <div class="item reveal"><span class="ico"><svg><use href="#i-search"/></svg></span><span class="num">[01]</span><h3>Диагностика и приоритизация</h3><p>Разбираем процессы и находим ключевые области бизнеса, где ИИ окупится.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-calc"/></svg></span><span class="num">[02]</span><h3>Финмодель и целевая архитектура</h3><p>Считаем эффект в деньгах и проектируем решение под контур заказчика: безопасность, интеграции, роли и доступы.</p></div>
@@ -470,10 +494,13 @@
               <path d="M1048 30 V200"/><path d="M1160 30 V200"/>
               <path d="M40 200 H1160"/>
             </g>
+            <!-- Day axis spans 1-14 to match the lead copy. The 10 columns
+                 are relabelled across that span (decorative schematic, not a
+                 real per-day grid) rather than redrawing the geometry. -->
             <g class="fg-cap">
-              <text x="40" y="22">Д1</text><text x="264" y="22">Д3</text>
-              <text x="600" y="22">Д6</text><text x="936" y="22">Д9</text>
-              <text x="1112" y="22">Д10</text>
+              <text x="40" y="22">Д1</text><text x="264" y="22">Д4</text>
+              <text x="600" y="22">Д8</text><text x="936" y="22">Д12</text>
+              <text x="1108" y="22">Д14</text>
             </g>
             <!-- five bars, one per step, offset like a real schedule -->
             <g class="fg-fill">
@@ -488,7 +515,7 @@
               <text x="208" y="72">02 ФИНМОДЕЛЬ И АРХИТЕКТУРА</text>
               <text x="432" y="102">03 MVP</text>
               <text x="768" y="132">04 МАСШТАБИРОВАНИЕ</text>
-              <text x="992" y="162">05 ЗАМЕР</text>
+              <text x="992" y="162">05 ОЦЕНКА РЕЗУЛЬТАТА</text>
             </g>
             <!-- the deadline -->
             <g class="fg-accent" stroke-width="1.5"><path d="M1160 30 V210"/></g>
@@ -515,20 +542,18 @@
   </section>
 
   <!-- О нас
-       One subject: 15 лет роста клиентов. The earlier draft opened with
-       his name and a three-discipline headline (финансы / консалтинг / ИИ),
-       which read as a personal bio and split the reader's attention across
-       two claims. Now the growth track record is the headline; the bio is
-       one line of proof underneath it, and he is named as co-founder there
-       rather than being the subject of the section.
+       Headline = the growth track record; lead states the how. Below it,
+       the founder is introduced explicitly (his own bio, RU-only), so the
+       "мы" above has a face behind it.
 
-       The "как помогаю" item grid is gone on purpose - Услуги above is
-       already the service catalogue with the same icon-item pattern, so it
-       was the same list a third time, led by finance. Результаты carries
-       the section instead: what changed in the client's business.
+       IMPORTANT - the portrait is a placeholder silhouette (inline data-URI),
+       NOT his real photo. Drop his photo at images/azamat.jpg and change the
+       <img src> to "images/azamat.jpg". Bio wording is his own; "Основатель"
+       is singular (he is the founder) - do not invent co-founders.
 
-       Every figure ($50 млн, $70 млн, до 40%, 50+, 15 лет) came from him -
-       none derived or rounded up here. -->
+       The Результаты cards and their figures ($70 млн, до 40%, $50 млн) moved
+       out of this section per his edit; if they should return, they were three
+       .ex cards tagged Процессы / Аналитика и ИИ / Рост и инвестиции. -->
   <section class="section" id="about">
     <div class="wrap">
       <p class="eyebrow reveal">О нас</p>
@@ -536,16 +561,19 @@
       <p class="lead reveal">Внедряем решения, перестраиваем процессы и ставим
         аналитику в основу решений. Работаем до результата, который видно
         в цифрах бизнеса.</p>
-      <p class="section-note reveal">С 2015 года - более 50 компаний.
-        Соучредитель - Азамат Сатывалдиев: финансы и аналитика в Amazon EU,
-        управленческий консалтинг в Accenture, финансовый контролёр
-        в международном производстве. MBA INSEAD, кандидат экономических наук.</p>
 
-      <h3 class="subhead reveal">Результаты</h3>
-      <div class="ex">
-        <div class="card reveal"><span class="tag">Процессы и операции</span><h3>Эффективность и трансформация</h3><p>Находим, где теряется результат, перепроектируем процессы и доводим до внедрения: $70 млн экономии в Amazon и в консалтинговых проектах. Программы трансформации для промышленных производителей на уровне C-suite.</p></div>
-        <div class="card reveal"><span class="tag">Аналитика и ИИ</span><h3>Данные как основа решений</h3><p>Продвинутая аналитика, машинное обучение и автоматизация. Системы, которые заменяют ручную работу рекомендациями и поддержкой решений в реальном времени. Улучшение процессов до 40%.</p></div>
-        <div class="card reveal"><span class="tag">Рост и инвестиции</span><h3>Планирование и сделки</h3><p>Планы, на основе которых привлечено $50 млн. Управление международными командами, due diligence по сделкам в нескольких странах.</p></div>
+      <div class="founder reveal">
+        <div class="founder-photo">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 154 192'%3E%3Crect width='154' height='192' fill='%23f0efec'/%3E%3Cg fill='%23c7c9c4'%3E%3Ccircle cx='77' cy='74' r='30'/%3E%3Cpath d='M25 192c0-33 23-56 52-56s52 23 52 56z'/%3E%3C/g%3E%3C/svg%3E"
+               alt="Азамат Сатывалдиев" width="154" height="192" />
+        </div>
+        <div class="founder-bio">
+          <p class="founder-name">Основатель - Азамат Сатывалдиев</p>
+          <p>Руководитель аналитики и финансов в Amazon EU. Управленческий
+            консалтинг в Accenture. Финансовый контролёр в международном
+            производстве. С 2015 года - независимый советник более чем для
+            50 компаний. MBA INSEAD, кандидат экономических наук.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -615,5 +643,6 @@
     frame();
   })();
   </script>
+  <script src="hero.js"></script>
 </body>
 </html>
