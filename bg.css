@@ -1,0 +1,26 @@
+/* ============================================================
+   Page atmosphere — index.html + case.html
+   ------------------------------------------------------------
+   This used to draw a generated neural-link mesh behind every section,
+   and later a lattice in the hero only. Both are gone: at any alpha that
+   made a drawn network visible it also competed with the type it sat
+   behind. What survives is the thing the mesh was really there for — a
+   low, soft light in the background instead of flat white.
+
+   No SVG, no JS, no animation. Three static radial washes, fixed to the
+   viewport so they drift past as you scroll: a cool light top-right, the
+   brand green low-left, and a faint warm lift at the bottom. Cheap
+   enough to be free (one composited layer, painted once) and it cannot
+   compete with text, because nothing in it has an edge.
+   ============================================================ */
+.bg{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(58% 48% at 82% 6%,  rgba(43,89,69,.09) 0%, rgba(43,89,69,0) 68%),
+    radial-gradient(52% 46% at 10% 34%, rgba(88,116,140,.08) 0%, rgba(88,116,140,0) 70%),
+    radial-gradient(72% 40% at 50% 104%,rgba(43,89,69,.07) 0%, rgba(43,89,69,0) 72%);
+}
+
+@media(max-width:720px){
+  .bg{opacity:.7}
+}

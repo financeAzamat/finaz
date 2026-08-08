@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>finaz — ИИ-решения для бизнеса</title>
+  <meta name="description" content="Создаём системные ИИ-решения: сначала диагностика процессов и финмодель эффекта, потом код. Фокус на измеримой ценности." />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="bg.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap&subset=cyrillic,latin" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    body{font-family:var(--font-text);font-size:var(--body);line-height:var(--lh-body);color:var(--ink);background:var(--paper);overflow-x:hidden}
+    .wrap{max-width:var(--max-width);margin-inline:auto;padding-inline:var(--gutter);position:relative}
+    .narrow{max-width:52rem}
+
+    /* --- Caption tier: 10px / 0.05em, the layer the display type is
+       measured against. Applies to kickers, eyebrows, numbers, tags. --- */
+    .kicker,.eyebrow,.num,.tag,.stack .k{
+      font-size:var(--caption);letter-spacing:var(--tracking-caption);
+      text-transform:uppercase;font-weight:500}
+    h1,h2,h3{font-family:"Manrope",var(--font-display);font-weight:600;letter-spacing:var(--tracking-tight)}
+    .logo,.num,.big,.intro-lede{font-family:"Manrope",var(--font-display)!important}
+    h1{font-size:clamp(2.1rem,5vw,var(--h1));line-height:var(--lh-tight);text-wrap:balance}
+    h2{font-size:clamp(1.5rem,3.2vw,var(--h2));line-height:var(--lh-snug);margin-bottom:var(--space-s);text-wrap:balance}
+    h3{font-size:var(--h5);line-height:var(--lh-snug);margin-bottom:.4em;letter-spacing:-.01em}
+    p{color:var(--muted-2);max-width:62ch}
+    p+p{margin-top:var(--space-s)}
+    strong{color:var(--ink);font-weight:600}
+    a{color:var(--link);text-decoration:none;transition:color var(--dur) var(--ease)}
+    a:hover{color:var(--ink)}
+
+    /* anchored sections clear the fixed nav */
+    section[id]{scroll-margin-top:84px}
+
+    /* Nav */
+    .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;height:72px;padding-inline:var(--gutter);color:var(--paper);transition:background var(--dur) var(--ease),backdrop-filter var(--dur) var(--ease),color var(--dur) var(--ease),border-color var(--dur) var(--ease);border-bottom:1px solid transparent}
+    .nav.scrolled{background:rgba(255,255,255,.9);backdrop-filter:blur(10px);color:var(--ink);border-bottom-color:var(--line)}
+    .nav a{color:inherit}
+    .nav .logo{font-family:var(--font-display);font-weight:600;font-size:1.15rem;letter-spacing:-.01em}
+    .nav .links{display:flex;align-items:center;gap:var(--space-m)}
+    .nav .links a.txtlink{font-size:var(--small)}
+    @media(max-width:820px){.nav .links{gap:var(--space-s)}}
+    @media(max-width:720px){.nav .links a.txtlink{display:none}}
+    .btn{font-family:var(--font-text);font-size:var(--small);padding:.7em 1.3em;border:1px solid currentColor;border-radius:2px;background:transparent;color:inherit;cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease),transform var(--dur-fast) var(--ease);display:inline-block}
+    .btn:hover{background:var(--ink);color:var(--paper)}
+    .nav.scrolled .btn:hover{background:var(--ink);color:var(--paper)}
+    .btn:active{transform:translateY(1px)}
+    .btn--solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .btn--solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+    .btn--lg{font-size:1.05rem;padding:.95em 1.9em}
+
+    /* Hero */
+    .hero{position:relative;overflow:hidden;min-height:96vh;display:grid;align-items:center;color:var(--paper);background:radial-gradient(120% 120% at 78% 12%,rgba(42,49,48,.9) 0%,rgba(26,29,31,.9) 46%,rgba(20,22,24,.9) 100%)}
+    /* accent aurora bloom — the Palantir "glow" tell */
+    .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(42% 55% at 82% 22%,rgba(43,89,69,.5),transparent 68%);pointer-events:none;transform:translateY(var(--drift,0))}
+    /* Copy sits above the aurora ::after. */
+    .hero .wrap{position:relative;z-index:2}
+    /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
+    .hero h1{max-width:19ch}
+    .hero .lede{color:rgba(255,255,255,.82);font-size:clamp(1.05rem,2.4vw,1.2rem);margin-top:var(--space-s);max-width:56ch}
+    .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
+    .kicker{font-family:var(--font-text);color:#fff;opacity:.7;margin-bottom:var(--space-s)}
+
+    /* Sections + smooth seams between blocks */
+    .section{padding-block:var(--section-v);position:relative}
+    /* Section fills carry alpha so the fixed .bg wash (bg.css) tints
+       them instead of every block being flat paper. It is a soft
+       gradient with no edges in it, so this can sit lower than it had to
+       when a drawn mesh was back there. */
+    .section--alt{background:rgba(249,249,249,.72)}
+    .section--dark{background:rgba(32,36,38,.94);color:var(--paper)}
+    .section--dark h2{color:#fff}
+    .section--dark p{color:rgba(255,255,255,.72)}
+    /* soft gradient seam so the dark block eases in/out rather than hard-cutting */
+    .section--dark::before,.section--dark::after{content:"";position:absolute;left:0;right:0;height:64px;pointer-events:none}
+    .section--dark::before{top:0;background:linear-gradient(rgba(32,36,38,.55),rgba(32,36,38,0))}
+    .section--dark::after{bottom:0;background:linear-gradient(rgba(32,36,38,0),rgba(32,36,38,.55))}
+    /* accent aurora bloom on dark sections */
+    .section--dark{overflow:hidden}
+    .section--dark .wrap{position:relative;z-index:1}
+    .section--dark .glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 60% at 88% 8%,rgba(43,89,69,.42),transparent 66%)}
+    /* eyebrow gets a leading hairline rule — the caption tier made structural */
+    .eyebrow{font-family:var(--font-text);color:var(--accent);margin-bottom:var(--space-s);display:flex;align-items:center;gap:.75em}
+    .eyebrow::before{content:"";width:2.5rem;height:1px;background:currentColor;opacity:.55;flex:none}
+    .section--dark .eyebrow{color:#7fb59d}
+    .lead{font-size:var(--lede);line-height:1.5;color:var(--ink);max-width:60ch;margin-bottom:var(--space-s)}
+    .section--dark .lead{color:#fff}
+    .section-note{font-size:.95rem;max-width:62ch}
+
+    /* Numbered items */
+    /* items sit on the column grid, separated by hairlines not just air */
+    .items{display:grid;gap:0;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:var(--space-l);
+      border-top:1px solid var(--line)}
+    .items>*{padding:var(--space-m) var(--space-m) var(--space-m) 0;border-bottom:1px solid var(--line)}
+    .section--dark .items,.section--dark .items>*{border-color:rgba(255,255,255,.12)}
+    .item .num{font-family:var(--font-display);color:var(--accent);display:block;margin-bottom:.6em}
+    .section--dark .item .num{color:#7fb59d}
+    .item p{font-size:var(--small);max-width:38ch}
+    .subhead{margin-top:var(--space-l);font-size:var(--h4)}
+
+    /* Line-stroke icons — thin, geometric, accent-colored */
+    .ico{width:30px;height:30px;display:block;margin-bottom:1em;color:var(--accent)}
+    .ico svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .section--dark .ico,.card .ico{color:var(--accent)}
+    .section--dark .ico{color:#7fb59d}
+
+    /* Industries — clickable card variant */
+    .item--link{position:relative;padding:var(--space-m);background:var(--paper);border:1px solid var(--line);border-radius:4px;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+    .item--link:hover{transform:translateY(-6px);box-shadow:0 20px 40px -20px rgba(30,33,36,.35);border-color:var(--accent)}
+    a.item--link,a.item--link:hover{color:var(--ink)}
+    .item--link .case-link{display:inline-block;margin-top:var(--space-s);font-size:var(--small);color:var(--accent);font-weight:600}
+    /* card grid opts out of the hairline-separator treatment */
+    .items--cards{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-m);border-top:0}
+    .items--cards>*{border-bottom:0}
+    .item--link p{max-width:none}
+
+    /* Solution examples — tagged mini-cards */
+    .ex{display:grid;gap:var(--space-m);grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:var(--space-m)}
+    .ex .card{padding:var(--space-m);background:var(--paper);border:1px solid var(--line);border-radius:4px;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+    .ex .card:hover{transform:translateY(-4px);box-shadow:0 20px 40px -22px rgba(43,89,69,.5);border-color:var(--accent)}
+    .tag{display:inline-block;color:var(--accent);border:1px solid var(--accent);border-radius:100px;padding:.35em .9em;margin-bottom:.8em}
+
+    /* Artifacts list */
+    .artifacts{display:grid;gap:var(--space-s) var(--space-m);grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:var(--space-l);list-style:none}
+    .artifacts li{padding-left:1.4em;position:relative;font-size:.98rem;color:var(--muted-2)}
+    .artifacts li::before{content:"—";position:absolute;left:0;color:var(--accent)}
+    .section--dark .artifacts li::before{color:#7fb59d}
+    .artifacts strong{display:block;color:var(--ink);font-weight:600;margin-bottom:.15em}
+    .section--dark .artifacts strong{color:#fff}
+    .section--dark .artifacts li{color:rgba(255,255,255,.72)}
+
+    /* Tech stack strip + model pills */
+    .stack{display:grid;gap:var(--space-m);grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:var(--space-l)}
+    .stack .k{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.35em}
+    .stack .v{font-size:.95rem;color:var(--muted-2)}
+    .pills{display:flex;flex-wrap:wrap;gap:.5em;margin-top:var(--space-m);list-style:none}
+    .pills li{font-size:.8rem;padding:.4em .9em;border:1px solid var(--line);border-radius:100px;color:var(--muted-2)}
+
+    /* ============================================================
+       MOTION SYSTEM — zero dependency.
+       Layer 1: scroll-linked, runs off the main thread where the
+                browser supports animation-timeline: view().
+       Layer 2: IntersectionObserver, only as the fallback.
+       Auto-stagger via --i, so 5- and 6-item grids reveal in
+       sequence instead of as one block (the old .d1/.d2/.d3 cap).
+       Budget: transform + opacity only, 120-300ms, no ambient loops.
+       ============================================================ */
+    .reveal{opacity:0;transform:translateY(var(--rise))}
+
+    /* Layer 1 — scroll-driven. No JS, no observer, no paint on scroll. */
+    @supports (animation-timeline: view()) {
+      .reveal{animation:rise linear both;animation-timeline:view();
+              animation-range:entry 4% cover 20%}
+      @keyframes rise{to{opacity:1;transform:none}}
+      /* Stagger inside a group: shift each item's range further in.
+         calc() goes INSIDE the range, after the range-name - wrapping
+         the name itself in calc() is invalid and silently drops the
+         whole declaration, which is what flattened the old version. */
+      .items>.reveal,.ex>.reveal{
+        animation-range-start:entry calc(4% + var(--i,0) * 3%);
+        animation-range-end:cover calc(20% + var(--i,0) * 3%)}
+    }
+
+    /* Layer 2 — fallback. .js-reveal is set by the script only when
+       animation-timeline is unsupported, so the two never both run. */
+    .js-reveal .reveal{transition:opacity var(--dur-slow) var(--ease-out),
+                                 transform var(--dur-slow) var(--ease-out);
+                       transition-delay:calc(var(--i,0) * var(--stagger))}
+    .js-reveal .reveal.in{opacity:1;transform:none}
+
+    /* ---- Technical figures: scroll-driven schematics ---------------
+       Technique lifted from bklit's chart-reveal (their React/Motion
+       component, rebuilt here in plain CSS - the page stays a zip file).
+       Their load-bearing detail: reveal by growing a clipPath rect's
+       WIDTH 0→full, never scaleX, because scaleX opens from the centre
+       and reads as a zoom instead of a left-to-right readout.
+       Here the reveal is bound to scroll position, so the schematic
+       constructs itself as you read it and then holds. Still no loops.
+       ---------------------------------------------------------------- */
+    .figure{margin-top:var(--space-l);position:relative}
+    .figure svg{width:100%;height:auto;display:block;overflow:visible}
+    .fg-hair{stroke:var(--line);stroke-width:1;fill:none}
+    .section--dark .fg-hair,.figure--dark .fg-hair{stroke:rgba(255,255,255,.13)}
+    .fg-cap{font-family:var(--font-text);font-size:9px;letter-spacing:1.2px;
+      fill:var(--muted);text-transform:uppercase}
+    .figure--dark .fg-cap{fill:rgba(255,255,255,.45)}
+    .fg-accent{stroke:var(--accent);fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .figure--dark .fg-accent{stroke:#8fd0b4}
+    .fg-fill{fill:var(--accent)}
+    .figure--dark .fg-fill{fill:#8fd0b4}
+    .fg-lbl{font-family:var(--font-display);font-size:13px;fill:var(--ink);
+      letter-spacing:var(--tracking-tight)}
+    .fg-num{font-family:var(--font-text);font-size:9px;letter-spacing:1.2px;fill:var(--accent)}
+    .fg-box{fill:none;stroke:var(--line);stroke-width:1}
+    .fg-cell{fill:var(--accent)}
+
+    /* The reveal wipe. Width is driven by scroll where supported. */
+    .fg-wipe{width:0}
+    @supports (animation-timeline: view()) {
+      /* The wipe rect lives inside <defs> and is therefore NOT rendered,
+         so its own view() timeline would never become active. Name the
+         timeline on the rendered .figure instead and let the descendant
+         rect reference it - no timeline-scope needed, it's an ancestor. */
+      .figure{view-timeline-name:--fig;view-timeline-axis:block}
+      .fg-wipe{animation:fgWipe linear both;animation-timeline:--fig;
+               animation-range:entry 12% cover 48%}
+      @keyframes fgWipe{to{width:var(--fw,1000px)}}
+    }
+    /* Fallback: one-shot transition when the observer marks it in. */
+    .js-reveal .fg-wipe{transition:width 1.1s cubic-bezier(.85,0,.15,1)}
+    .js-reveal .figure.in .fg-wipe{width:var(--fw,1000px)}
+    /* No scroll timeline AND no JS reveal (i.e. reduced motion): show all. */
+    @media(prefers-reduced-motion:reduce){
+      .fg-wipe{width:var(--fw,1000px);animation:none;transition:none}
+    }
+
+    /* The figures are ~1200 viewBox units wide and scale to fit. On a
+       phone that scale is ~0.37, so a 9-unit caption renders at ~3px -
+       unreadable. Text inside an SVG is sized in USER units, so the
+       compensation is to bump the unit size, not the rendered px. */
+    @media(max-width:720px){
+      .figure{margin-top:var(--space-m)}
+      .fg-cap,.fg-num{font-size:24px;letter-spacing:2.5px}
+      .fg-lbl{font-size:34px}
+      /* At a 24-unit caption the gantt's 30-unit row pitch no longer
+         clears its own bars, so the per-bar labels drop out. The five
+         numbered steps sit directly above the figure and already name
+         them; what the figure has to carry on a phone is the SHAPE of
+         the schedule and the day axis, and both survive. */
+      #process .fg-bar-lbl{display:none}
+      /* Same cause in the pipeline figure: a 34-unit label no longer
+         fits a 200-unit box. Widen the boxes and re-point the arrows
+         into the remaining gaps rather than shrink the text back. */
+      #services .fg-box{width:250px}
+      #services .fg-arrow{display:none}
+    }
+
+    /* NOTE: the .draw scroll-drawn-hairline system lived here. Its only
+       target on this page was the chip SVG, replaced by the self-drawing
+       hero figure (.fig-*), so it was removed rather than left inert.
+       case.html never used it either. */
+
+    @media(prefers-reduced-motion:reduce){
+      .reveal{opacity:1;transform:none;animation:none}
+    }
+
+    /* CTA + footer */
+    .cta-band{padding-block:var(--space-l)}
+    .cta-band h2{max-width:22ch}
+    .cta-band p{margin-top:var(--space-s)}
+    /* gradient CTA — matches hero, keeps homepage image-light */
+    .cta-band--grad{position:relative;overflow:hidden;color:var(--paper);background:radial-gradient(120% 120% at 22% 8%,#2a3130 0%,#1a1d1f 48%,#141618 100%)}
+    .cta-band--grad::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(44% 70% at 78% 90%,rgba(43,89,69,.45),transparent 66%)}
+    .cta-band--grad .wrap{position:relative;z-index:1}
+    .cta-band--grad h2{color:#fff}
+    .cta-band--grad p{color:rgba(255,255,255,.8)}
+    /* contact row: text links, hairline-separated, not a second button set —
+       the primary CTA above should stay the only button in the band */
+    .contacts{display:flex;flex-wrap:wrap;gap:0 var(--space-m);margin-top:var(--space-m);list-style:none}
+    .contacts a{color:rgba(255,255,255,.82);font-size:var(--small);padding-block:.35em;border-bottom:1px solid rgba(255,255,255,.28);transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease)}
+    .contacts a:hover{color:#fff;border-color:#fff}
+    footer{background:#0d0e10;color:rgba(255,255,255,.55);padding-block:var(--space-m);font-size:.85rem}
+    footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space-s)}
+    footer a{color:rgba(255,255,255,.7)}
+    .cookie-note{margin:0;font-size:var(--caption);letter-spacing:var(--tracking-caption);
+      text-transform:uppercase;color:rgba(255,255,255,.4);max-width:34ch}
+    .draft-flag{position:fixed;bottom:14px;right:14px;z-index:60;background:var(--error);color:#fff;font-size:.7rem;letter-spacing:.05em;padding:.4em .8em;border-radius:2px;font-family:var(--font-text);opacity:.9}
+
+    /* --- Responsive rhythm: tighten spacing on laptop-small and mobile --- */
+    @media(max-width:900px){
+      :root{--section-v:4rem;--space-l:4rem;--space-m:2.4rem}
+      .hero{min-height:90vh}
+    }
+    @media(max-width:560px){
+      :root{--section-v:3rem;--space-l:3rem;--space-m:2rem;--gutter:1.25rem}
+      .hero{min-height:86vh}
+      .items,.ex,.stack{gap:var(--space-s)}
+      .draft-flag{font-size:.62rem;bottom:8px;right:8px}
+      footer .wrap{justify-content:center;text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page atmosphere: a fixed, static low-light gradient wash behind
+       every section (bg.css). No SVG, no JS, no motion - the drawn
+       lattice lives only in the hero now. Decorative only. -->
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- Icon sprite (thin-stroke, 24×24 viewBox) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M10 3v2M14 3v2M10 19v2M14 19v2M3 10h2M3 14h2M19 10h2M19 14h2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M8 15l3-4 3 2 4-6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M5 7h9M18 7h1M5 12h1M10 12h9M5 17h13M20 17h-1"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="20" cy="17" r="2"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 3z"/><path d="M8 9h8M8 12h5"/></symbol>
+    <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v5M15 3v5"/><path d="M6 8h12v3a6 6 0 01-12 0z"/><path d="M12 17v4"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/><path d="M12 14v3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11h.01M8 15h2M12 15h2M16 15h.01"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M14 4c3 0 6 3 6 6-2 4-6 6-6 6l-4-4s2-4 4-6c0-1 0-2 0-2z"/><path d="M10 12l-3 1-1 4 4-1 1-3"/><circle cx="15" cy="9" r="1"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 15a8 8 0 1116 0"/><path d="M12 15l4-3"/><circle cx="12" cy="15" r="1"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2l2.5 11h10L20 7H6.5"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol>
+    <symbol id="i-crane" viewBox="0 0 24 24"><path d="M5 21V5l14 3M5 5l3-2"/><path d="M5 8h6M8 8v3M8 11h-2M8 11h2"/><rect x="3" y="21" width="6" height="0.5"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v9H3zM14 9h4l3 3v3h-7z"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5h4a1.8 1.8 0 010 3.6h-3a1.8 1.8 0 000 3.6h4"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h12v5a5 5 0 01-10 0z"/><path d="M17 9h2a2 2 0 010 4h-2"/><path d="M6 20h10"/></symbol>
+  </svg>
+
+  <nav class="nav">
+    <a href="index.html" class="logo">◐ finaz</a>
+    <div class="links">
+      <a href="#services" class="txtlink">Услуги</a>
+      <a href="#llm" class="txtlink">LLM</a>
+      <a href="#industries" class="txtlink">Отрасли</a>
+      <a href="#about" class="txtlink">О нас</a>
+      <a href="#cta" class="btn">Обсудить задачу</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <!-- No generated visual here: the hero is the dark gradient plus the
+         aurora bloom and the type. Every drawn version of this (mesh,
+         then the LLM-flow diagram) competed with the headline. -->
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="kicker reveal">ИИ-решения для бизнеса</p>
+        <!-- No hard <br>: at 56px the balanced wrap is more robust across
+             viewports than a fixed break tuned for 80px. -->
+        <h1 class="reveal">Технологии, которые дают измеримый результат</h1>
+        <div class="cta reveal">
+          <a href="#cta" class="btn btn--solid btn--lg">Обсудить задачу</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Услуги -->
+  <section class="section" id="services">
+    <div class="wrap">
+      <p class="eyebrow reveal">Услуги</p>
+      <h2 class="reveal">Создаём системные решения на основе ИИ
+        для повышения эффективности вашего бизнеса</h2>
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Помогаем выбрать ключевые области, где ИИ даст наилучший результат. Анализируем, подбираем сценарии применения и встраиваем технологии в текущие бизнес-процессы.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chip"/></svg></span><span class="num">[02]</span><h3>Искусственный интеллект для бизнеса</h3><p>Разрабатываем и внедряем решения на основе LLM и ИИ, привязанные к ROI: агентов, чат-ботов, системы прогнозирования и видеоаналитику.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chart"/></svg></span><span class="num">[03]</span><h3>Аналитика и прогнозирование</h3><p>Прогнозирование спроса, управление запасами (F&amp;R), ценообразование. Внедряем аналитические системы там, где ручной расчёт уже не тянет объём данных.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[04]</span><h3>Аудит и внедрение под ключ</h3><p>Ведём проект от идеи до внедрения: технический аудит, анализ рисков, пути оптимизации. Честно говорим, где узкое место и что даст эффект первым.</p></div>
+      </div>
+
+      <!-- Figure: the pipeline the four services add up to. Constructs
+           itself left-to-right as the section scrolls in, then holds. -->
+      <div class="figure" aria-hidden="true">
+        <svg viewBox="0 0 1200 200" role="img">
+          <defs>
+            <clipPath id="wipePipe">
+              <rect class="fg-wipe" style="--fw:1200px" x="0" y="0" height="200"/>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#wipePipe)">
+            <path class="fg-hair" d="M0 100 H1200"/>
+            <g class="fg-hair"><path d="M40 60 V140"/><path d="M330 60 V140"/>
+              <path d="M620 60 V140"/><path d="M910 60 V140"/><path d="M1160 60 V140"/></g>
+            <g>
+              <rect class="fg-box" x="40" y="76" width="200" height="48"/>
+              <rect class="fg-box" x="330" y="76" width="200" height="48"/>
+              <rect class="fg-box" x="620" y="76" width="200" height="48"/>
+              <rect class="fg-box" x="910" y="76" width="200" height="48"/>
+            </g>
+            <g class="fg-num">
+              <text x="40" y="60">01</text><text x="330" y="60">02</text>
+              <text x="620" y="60">03</text><text x="910" y="60">04</text>
+            </g>
+            <g class="fg-lbl">
+              <text x="52" y="106">Данные</text><text x="342" y="106">Сценарий</text>
+              <text x="632" y="106">Модель</text><text x="922" y="106">Решение</text>
+            </g>
+            <g class="fg-accent fg-arrow" stroke-width="1.5">
+              <path d="M240 100 H322 M316 94 l6 6 -6 6"/>
+              <path d="M530 100 H612 M606 94 l6 6 -6 6"/>
+              <path d="M820 100 H902 M896 94 l6 6 -6 6"/>
+            </g>
+            <g class="fg-cap"><text x="40" y="166">вход</text>
+              <text x="1064" y="166">эффект</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- LLM -->
+  <section class="section section--alt" id="llm">
+    <div class="wrap">
+      <p class="eyebrow reveal">LLM</p>
+      <h2 class="reveal">Внедряем передовые языковые модели (LLM)
+        под задачи бизнеса, разворачиваем в облаке или на серверах клиента</h2>
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-sliders"/></svg></span><span class="num">[01]</span><h3>Тонкая настройка под задачу</h3><p>Адаптируем YandexGPT, GigaChat, Llama, Qwen, DeepSeek и другие модели под ваши данные и отраслевую специфику.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chat"/></svg></span><span class="num">[02]</span><h3>Решения на базе LLM</h3><p>Чат-боты и ассистенты, поиск по документам (RAG), анализ тональности, распознавание речи - под конкретный процесс.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-plug"/></svg></span><span class="num">[03]</span><h3>Интеграция в ваши системы</h3><p>Бесшовное подключение к корпоративным системам без простоев - модель работает внутри вашего контура.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-database"/></svg></span><span class="num">[04]</span><h3>Данные и инфраструктура</h3><p>Подготовка, очистка и аугментация датасетов. Развёртывание в облаке или on-premise, DevOps-поддержка.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-lock"/></svg></span><span class="num">[05]</span><h3>Безопасность и комплаенс</h3><p>Защита данных и моделей, соответствие требованиям (152-ФЗ), мониторинг и обнаружение дрейфа. Open-source модели (Сайга, Вихрь, RuAdapt) для данных, которые нельзя вывозить наружу.</p></div>
+      </div>
+
+      <h3 class="subhead reveal">Что решают на LLM</h3>
+      <div class="ex">
+        <div class="card reveal"><span class="tag">Отзывы</span><h3>Анализ отзывов и тональности</h3><p>Обработка тысяч отзывов: тональность, категоризация, ключевые тренды. Снимает ручные операции и подсвечивает, что чинить в продукте и сервисе.</p></div>
+        <div class="card reveal"><span class="tag">HR-аналитика</span><h3>Аналитика опросов сотрудников</h3><p>Автоматическая обработка обратной связи: тональность, ключевые темы, детализированный отчёт в дашборде.</p></div>
+        <div class="card reveal"><span class="tag">Поддержка</span><h3>Автоматизация первой линии</h3><p>AI-агент принимает запросы из разных каналов, отвечает на типовые и маршрутизирует по отделам - меньше нагрузка, в разы короче время ответа.</p></div>
+      </div>
+
+      <ul class="pills reveal">
+        <li>YandexGPT</li><li>GigaChat</li><li>Qwen</li><li>GPT</li><li>DeepSeek</li>
+        <li>Llama</li><li>Gemini</li><li>Claude</li><li>Stable Diffusion</li><li>DALL·E</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Внедрение -->
+  <section class="section" id="process">
+    <div class="wrap">
+      <p class="eyebrow reveal">Внедрение</p>
+      <h2 class="reveal">От задачи до работающего MVP</h2>
+      <p class="lead reveal">Внедрим пилотный ИИ проект от задачи до работающего MVP
+        за 10 дней.</p>
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-search"/></svg></span><span class="num">[01]</span><h3>Диагностика и приоритизация</h3><p>Разбираем процессы и находим ключевые области бизнеса, где ИИ окупится.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-calc"/></svg></span><span class="num">[02]</span><h3>Финмодель и целевая архитектура</h3><p>Считаем эффект в деньгах и проектируем решение под контур заказчика: безопасность, интеграции, роли и доступы.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-rocket"/></svg></span><span class="num">[03]</span><h3>MVP с бизнес-ценностью</h3><p>Создаём пилот с чёткими критериями успеха.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[04]</span><h3>Масштабирование и платформа</h3><p>Трансформируем пилот в полноценный продукт для бизнеса.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[05]</span><h3>Измерение эффекта и портфель</h3><p>Отчёт «до / после» на реальных метриках, мониторинг после запуска, приоритизация следующих инициатив.</p></div>
+      </div>
+
+      <!-- Figure: the 10-day schedule as a real gantt, not a metaphor.
+           Day marks are 1-10; the bars are the five steps above.
+           Same clip wipe, so it fills in as you read the section. -->
+      <div class="figure" aria-hidden="true">
+        <svg viewBox="0 0 1200 230" role="img">
+          <defs>
+            <clipPath id="wipeGantt">
+              <rect class="fg-wipe" style="--fw:1200px" x="0" y="0" height="230"/>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#wipeGantt)">
+            <!-- day grid: 10 columns of 112px from x=40 -->
+            <g class="fg-hair">
+              <path d="M40 30 V200"/><path d="M152 30 V200"/><path d="M264 30 V200"/>
+              <path d="M376 30 V200"/><path d="M488 30 V200"/><path d="M600 30 V200"/>
+              <path d="M712 30 V200"/><path d="M824 30 V200"/><path d="M936 30 V200"/>
+              <path d="M1048 30 V200"/><path d="M1160 30 V200"/>
+              <path d="M40 200 H1160"/>
+            </g>
+            <g class="fg-cap">
+              <text x="40" y="22">Д1</text><text x="264" y="22">Д3</text>
+              <text x="600" y="22">Д6</text><text x="936" y="22">Д9</text>
+              <text x="1112" y="22">Д10</text>
+            </g>
+            <!-- five bars, one per step, offset like a real schedule -->
+            <g class="fg-fill">
+              <rect x="40"  y="46"  width="224" height="14"/>
+              <rect x="208" y="76"  width="280" height="14"/>
+              <rect x="432" y="106" width="392" height="14"/>
+              <rect x="768" y="136" width="280" height="14"/>
+              <rect x="992" y="166" width="168" height="14"/>
+            </g>
+            <g class="fg-num fg-bar-lbl">
+              <text x="40"  y="42">01 ДИАГНОСТИКА</text>
+              <text x="208" y="72">02 ФИНМОДЕЛЬ И АРХИТЕКТУРА</text>
+              <text x="432" y="102">03 MVP</text>
+              <text x="768" y="132">04 МАСШТАБИРОВАНИЕ</text>
+              <text x="992" y="162">05 ЗАМЕР</text>
+            </g>
+            <!-- the deadline -->
+            <g class="fg-accent" stroke-width="1.5"><path d="M1160 30 V210"/></g>
+            <text class="fg-num" x="1096" y="226">MVP</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Отрасли -->
+  <section class="section" id="industries">
+    <div class="wrap">
+      <p class="eyebrow reveal">Отрасли</p>
+      <div class="items items--cards">
+        <div class="item--link reveal"><span class="ico"><svg><use href="#i-cart"/></svg></span><span class="num">[01]</span><h3>Ритейл и e-commerce</h3><p>Прогнозирование спроса, ценообразование, управление запасами. AI-аналитика отзывов и клиентского опыта.</p></div>
+        <a href="case.html" class="item--link reveal"><span class="ico"><svg><use href="#i-crane"/></svg></span><span class="num">[02]</span><h3>Промышленность и строительство</h3><p>Предиктивная аналитика, контроль сроков и качества работ, автоматизация производственных процессов.</p><span class="case-link">Смотреть кейс: контроль строительства →</span></a>
+        <div class="item--link reveal"><span class="ico"><svg><use href="#i-truck"/></svg></span><span class="num">[03]</span><h3>Логистика и транспорт</h3><p>Оптимизация цепочек поставок и запасов, компьютерное зрение для контроля операций и снижения затрат.</p></div>
+        <div class="item--link reveal"><span class="ico"><svg><use href="#i-box"/></svg></span><span class="num">[04]</span><h3>FMCG</h3><p>Прогнозирование спроса и динамическое ценообразование для производителей и дистрибьюторов, компьютерное зрение на производстве.</p></div>
+        <div class="item--link reveal"><span class="ico"><svg><use href="#i-coin"/></svg></span><span class="num">[05]</span><h3>Финтех</h3><p>Анализ данных, оценка рисков, выявление аномалий и прогнозирование - на объёмах, где ручная проверка не справляется.</p></div>
+        <div class="item--link reveal"><span class="ico"><svg><use href="#i-cup"/></svg></span><span class="num">[06]</span><h3>HoReCa</h3><p>Автоматизация учёта, планирования ресурсов и управления заказами, прогнозирование загрузки.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- О нас
+       One subject: 15 лет роста клиентов. The earlier draft opened with
+       his name and a three-discipline headline (финансы / консалтинг / ИИ),
+       which read as a personal bio and split the reader's attention across
+       two claims. Now the growth track record is the headline; the bio is
+       one line of proof underneath it, and he is named as co-founder there
+       rather than being the subject of the section.
+
+       The "как помогаю" item grid is gone on purpose - Услуги above is
+       already the service catalogue with the same icon-item pattern, so it
+       was the same list a third time, led by finance. Результаты carries
+       the section instead: what changed in the client's business.
+
+       Every figure ($50 млн, $70 млн, до 40%, 50+, 15 лет) came from him -
+       none derived or rounded up here. -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <p class="eyebrow reveal">О нас</p>
+      <h2 class="reveal">15 лет помогаем компаниям расти</h2>
+      <p class="lead reveal">Внедряем решения, перестраиваем процессы и ставим
+        аналитику в основу решений. Работаем до результата, который видно
+        в цифрах бизнеса.</p>
+      <p class="section-note reveal">С 2015 года - более 50 компаний.
+        Соучредитель - Азамат Сатывалдиев: финансы и аналитика в Amazon EU,
+        управленческий консалтинг в Accenture, финансовый контролёр
+        в международном производстве. MBA INSEAD, кандидат экономических наук.</p>
+
+      <h3 class="subhead reveal">Результаты</h3>
+      <div class="ex">
+        <div class="card reveal"><span class="tag">Процессы и операции</span><h3>Эффективность и трансформация</h3><p>Находим, где теряется результат, перепроектируем процессы и доводим до внедрения: $70 млн экономии в Amazon и в консалтинговых проектах. Программы трансформации для промышленных производителей на уровне C-suite.</p></div>
+        <div class="card reveal"><span class="tag">Аналитика и ИИ</span><h3>Данные как основа решений</h3><p>Продвинутая аналитика, машинное обучение и автоматизация. Системы, которые заменяют ручную работу рекомендациями и поддержкой решений в реальном времени. Улучшение процессов до 40%.</p></div>
+        <div class="card reveal"><span class="tag">Рост и инвестиции</span><h3>Планирование и сделки</h3><p>Планы, на основе которых привлечено $50 млн. Управление международными командами, due diligence по сделкам в нескольких странах.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-band cta-band--grad" id="cta">
+    <div class="wrap">
+      <p class="eyebrow reveal">Следующий шаг</p>
+      <h2 class="reveal">Разберём вашу задачу и предложим решение с оптимальной окупаемостью</h2>
+      <div class="reveal" style="margin-top:var(--space-m)">
+        <a href="https://t.me/finazamat" class="btn btn--solid">Обсудить задачу →</a>
+      </div>
+      <!-- Contacts. Telegram is his live handle. LinkedIn and WhatsApp
+           hrefs are NOT filled in: the profile URL and the number were
+           not given, and a guessed contact link is worse than none. -->
+      <ul class="contacts reveal">
+        <li><a href="#" data-verify="LinkedIn URL">LinkedIn</a></li>
+        <li><a href="https://t.me/finazamat">Telegram</a></li>
+        <li><a href="#" data-verify="WhatsApp number">WhatsApp</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <a href="index.html">◐ finaz</a>
+      <!-- Factual as built: static pages, no analytics, no trackers, nothing
+           written to the browser. Change this line if analytics get added. -->
+      <p class="cookie-note">Сайт не использует cookies и не собирает
+        данные о посетителях.</p>
+    </div>
+  </footer>
+
+  <script>
+  (()=>{
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* 1. Auto-stagger: index every child of a revealing group.
+          Unlimited items - replaces the hand-assigned .d1/.d2/.d3. */
+    document.querySelectorAll(".items,.ex,.pills,.hero-copy,.stagger")
+      .forEach(g=>[...g.children].forEach((el,i)=>el.style.setProperty("--i",i)));
+
+    /* 2. Reveal. Native scroll-linked animation handles this wherever
+          it exists; the observer only runs as the fallback. */
+    if(!CSS.supports("animation-timeline: view()") && !reduce){
+      document.documentElement.classList.add("js-reveal");
+      const io=new IntersectionObserver(es=>{
+        for(const e of es) if(e.isIntersecting){
+          e.target.classList.add("in");io.unobserve(e.target);
+        }
+      },{threshold:.12,rootMargin:"0px 0px -6% 0px"});
+      /* .figure joins the observer so its clip wipe gets its one-shot
+         transition on the fallback path too. */
+      document.querySelectorAll(".reveal,.figure").forEach(el=>io.observe(el));
+    }
+
+    /* 3. Nav state + hero parallax. rAF-throttled, transform only. */
+    const nav=document.querySelector(".nav"),hero=document.querySelector(".hero");
+    let queued=false;
+    const frame=()=>{
+      queued=false;
+      const y=scrollY;
+      nav.classList.toggle("scrolled",y>40);
+      if(hero&&!reduce&&y<innerHeight) hero.style.setProperty("--drift",(y*.06)+"px");
+    };
+    addEventListener("scroll",()=>{if(!queued){queued=true;requestAnimationFrame(frame)}},{passive:true});
+    frame();
+  })();
+  </script>
+</body>
+</html>

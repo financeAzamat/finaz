@@ -1,0 +1,81 @@
+/* ============================================================
+   Design tokens — extracted from palantir.com (2026-08-02)
+   Palantir-INSPIRED. Colors + type scale are the recipe, not
+   the dish. Fonts here are FREE substitutes (their Alliance
+   faces are proprietary — do not re-host those).
+   ============================================================ */
+:root {
+  /* --- Color (from their --nhs-* / --qualitative-* vars) --- */
+  --ink:            #1e2124;   /* primary text / near-black */
+  --ink-2:          #202426;   /* darkest surface */
+  --paper:          #ffffff;
+  --paper-soft:     #f9f9f9;
+  --paper-2:        #f3f3f3;
+  --line:           #dbdbdb;
+  --muted:          #767676;
+  --muted-2:        #636363;
+
+  --accent:         #2b5945;   /* Palantir green */
+  --accent-10:      rgba(43,89,69,.10);
+  --accent-05:      rgba(43,89,69,.05);
+  --link:           #4e8af7;
+  --link-hover:     rgba(78,138,247,.33);
+  --error:          #ff4136;
+
+  /* Blueprint-style qualitative set (charts / tags / accents) */
+  --q0:#147eb3; --q1:#29a634; --q2:#d1980b; --q3:#d13913; --q4:#634dbf;
+  --q5:#d17e09; --q6:#9f1239; --q7:#00a396; --q8:#5642a6; --q9:#728c23;
+
+  /* --- Type --- */
+  /* Their stack is "Alliance No.2" (display) + "Alliance No.1" (text).
+     Free substitutes with a similar geometric-grotesque feel: */
+  --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-text:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Type scale — a real ladder, no 1rem→5rem jump.
+     Ratio ~1.25 through the middle, in rem @16px base.
+     Sized down 2026-08-04: 80px/52px read as oversized next to the
+     10px caption tier. Palantir's own hero sits ~56-60px, h2 ~36-40px —
+     the contrast ratio is what reads as confident, not raw size. */
+  --h1:      3.5rem;      /* 56px hero — was 5rem */
+  --h2:      2.375rem;    /* 38px section — was 3.25rem */
+  --h3:      1.75rem;     /* 28px — was 2.125rem */
+  --h4:      1.5rem;      /* 24px */
+  --h5:      1.1875rem;   /* 19px item title */
+  --lede:    1.25rem;     /* 20px intro / lead */
+  --body:    1rem;        /* 16px */
+  --small:   0.875rem;    /* 14px */
+  --micro:   0.75rem;     /* 12px */
+  --caption: 0.625rem;    /* 10px — the wide-tracked label tier */
+
+  --tracking-tight:   -0.02em;   /* display / headlines */
+  --tracking-caption:  0.05em;   /* the 10px caption tier */
+  --lh-tight: 1.0;             /* hero line-height ~1 */
+  --lh-snug:  1.15;            /* h2/h3 */
+  --lh-body:  1.43;
+
+  /* --- Spacing (their rhythm ~1.667rem gutter) --- */
+  --gutter:      1.6667rem;
+  --space-xs:    0.5556rem;
+  --space-s:     1.1111rem;
+  --space-m:     3.3333rem;
+  --space-l:     6.6667rem;
+  --section-v:   5.5556rem;
+  --max-width:   80rem;        /* 1280px content cap */
+
+  /* --- Motion ---
+     Measured off palantir.com (2026-08-04): 75-350ms, dominated by
+     100-250ms, transform+opacity only, staggered transition-delay
+     75-275ms, zero @keyframes, no ambient loops. Budget kept here. */
+  --ease:      cubic-bezier(0.42, 0, 0.58, 1);   /* ease-in-out */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);    /* reveal */
+  --dur-fast:  0.12s;
+  --dur:       0.2s;
+  --dur-slow:  0.3s;    /* was 0.5s — 500ms uniform fades read as template */
+  --stagger:   55ms;    /* per-item step, driven by --i */
+  --rise:      14px;    /* reveal travel — was 28px */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast:0s; --dur:0s; --dur-slow:0s; --stagger:0ms; --rise:0px; }
+}

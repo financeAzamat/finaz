@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Интеллектуальный контроль строительства</title>
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="bg.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap&subset=cyrillic,latin" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    body{font-family:var(--font-text);font-size:var(--body);line-height:var(--lh-body);color:var(--ink);background:var(--paper)}
+    .wrap{max-width:var(--max-width);margin-inline:auto;padding-inline:var(--gutter);position:relative}
+
+    /* --- Caption tier: 10px / 0.05em, what the display type is
+       measured against. --- */
+    .kicker,.eyebrow,.num{
+      font-size:var(--caption);letter-spacing:var(--tracking-caption);
+      text-transform:uppercase;font-weight:500}
+    .narrow{max-width:52rem}
+    h1,h2,h3{font-family:"Manrope",var(--font-display);font-weight:600;letter-spacing:var(--tracking-tight)}
+    .logo,.num,.big,.intro-lede{font-family:"Manrope",var(--font-display)!important}
+    h1{font-size:clamp(2.6rem,7vw,var(--h1));line-height:var(--lh-tight)}
+    h2{font-size:clamp(1.75rem,4.4vw,var(--h2));line-height:var(--lh-snug);margin-bottom:var(--space-s);text-wrap:balance}
+    h3{font-size:var(--h5);line-height:var(--lh-snug);margin-bottom:.4em;letter-spacing:-.01em}
+    p{color:var(--muted-2);max-width:62ch}
+    p+p{margin-top:var(--space-s)}
+    strong{color:var(--ink);font-weight:600}
+    a{color:var(--link);text-decoration:none;transition:color var(--dur) var(--ease)}
+    a:hover{color:var(--ink)}
+
+    /* Nav */
+    .nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;height:72px;padding-inline:var(--gutter);color:var(--paper);transition:background var(--dur) var(--ease),backdrop-filter var(--dur) var(--ease),color var(--dur) var(--ease),border-color var(--dur) var(--ease);border-bottom:1px solid transparent}
+    .nav.scrolled{background:rgba(255,255,255,.9);backdrop-filter:blur(10px);color:var(--ink);border-bottom-color:var(--line)}
+    .nav a{color:inherit}
+    .nav .logo{font-family:var(--font-display);font-weight:600;font-size:1.15rem;letter-spacing:-.01em}
+    .nav .links{display:flex;align-items:center;gap:var(--space-m)}
+    .nav .links a.txtlink{font-size:var(--small)}
+    @media(max-width:720px){.nav .links a.txtlink{display:none}}
+    .btn{font-family:var(--font-text);font-size:var(--small);padding:.7em 1.3em;border:1px solid currentColor;border-radius:2px;background:transparent;color:inherit;cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease),transform var(--dur-fast) var(--ease);display:inline-block}
+    .btn:hover{background:var(--ink);color:var(--paper)}
+    .nav.scrolled .btn:hover{background:var(--ink);color:var(--paper)}
+    .btn:active{transform:translateY(1px)}
+    .btn--solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+    .btn--solid:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+
+    /* Hero */
+    .hero{position:relative;overflow:hidden;min-height:96vh;display:grid;align-items:center;color:var(--paper);background:linear-gradient(rgba(20,22,24,.55),rgba(20,22,24,.82)),url("images/01-tower-crane_JamesSullivan.jpg") center/cover no-repeat}
+    .hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(42% 55% at 82% 22%,rgba(43,89,69,.4),transparent 68%)}
+    .hero .wrap{position:relative;z-index:1}
+    .hero h1{max-width:16ch}
+    .hero .lede{color:rgba(255,255,255,.82);font-size:1.2rem;margin-top:var(--space-s);max-width:56ch}
+    .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
+    .kicker{font-family:var(--font-text);color:#fff;opacity:.7;margin-bottom:var(--space-s)}
+
+    /* Sections */
+    .section{padding-block:var(--section-v)}
+    /* Alpha fills so the fixed .bg gradient wash tints the sections;
+       see bg.css for why that layer sits at z-index:-1. */
+    .section--alt{background:rgba(249,249,249,.72)}
+    .section--dark{background:rgba(32,36,38,.94);color:var(--paper);overflow:hidden}
+    .section--dark h2{color:#fff}
+    .section--dark p{color:rgba(255,255,255,.72)}
+    .section--dark .wrap{position:relative;z-index:1}
+    .section--dark .glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 60% at 88% 8%,rgba(43,89,69,.42),transparent 66%)}
+    /* eyebrow carries a leading hairline - caption tier made structural */
+    .eyebrow{font-family:var(--font-text);color:var(--accent);margin-bottom:var(--space-s);display:flex;align-items:center;gap:.75em}
+    .eyebrow::before{content:"";width:2.5rem;height:1px;background:currentColor;opacity:.55;flex:none}
+    .section--dark .eyebrow{color:#7fb59d}
+
+    /* Line-stroke icons — matches homepage */
+    .ico{width:30px;height:30px;display:block;margin-bottom:1em;color:var(--accent)}
+    .ico svg{width:100%;height:100%;display:block;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .section--dark .ico{color:#7fb59d}
+    .intro-lede{font-size:1.35rem;line-height:1.5;color:var(--ink);max-width:60ch;font-family:var(--font-display);font-weight:400;letter-spacing:-.01em}
+
+    /* Numbered items — separated by hairlines, not just air */
+    .items{display:grid;gap:0;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:var(--space-l);
+      border-top:1px solid var(--line)}
+    .items>*{padding:var(--space-m) var(--space-m) var(--space-m) 0;border-bottom:1px solid var(--line)}
+    .section--dark .items,.section--dark .items>*{border-color:rgba(255,255,255,.12)}
+    .item .num{font-family:var(--font-display);color:var(--accent);display:block;margin-bottom:.6em}
+    .section--dark .item .num{color:#7fb59d}
+    .item p{font-size:var(--small);max-width:38ch}
+
+    /* Modules */
+    .mods{display:grid;gap:var(--space-m);grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:var(--space-m)}
+    .mod{padding:var(--space-m);background:var(--paper);border:1px solid var(--line);border-radius:4px;transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+    .mod:hover{transform:translateY(-6px);box-shadow:0 20px 40px -20px rgba(30,33,36,.35)}
+    .mod .tag{display:inline-block;width:10px;height:10px;border-radius:2px;margin-bottom:var(--space-s)}
+
+    /* Results / metrics */
+    .metrics{display:grid;gap:var(--space-m);grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:var(--space-l)}
+    .metric .big{font-family:var(--font-display);font-size:3.4rem;font-weight:500;letter-spacing:-.03em;line-height:1;color:#fff}
+    .metric .big .ph{color:#7fb59d}
+    .metric p{margin-top:.5em;font-size:.95rem}
+    .disclaimer{margin-top:var(--space-m);font-size:.8rem;color:rgba(255,255,255,.5);border-left:2px solid var(--accent);padding-left:var(--space-s);max-width:60ch}
+
+    /* Figure */
+    figure{margin-top:var(--space-l)}
+    figure img{width:100%;height:auto;border-radius:4px;display:block}
+    figcaption{font-size:.8rem;color:var(--muted);margin-top:.6em}
+
+    /* split image band */
+    .band{display:grid;grid-template-columns:1fr 1fr;min-height:60vh}
+    .band .txt{display:grid;align-content:center;padding:var(--section-v) var(--gutter)}
+    /* Shared color grade so photos read as one tonal family, not random stock */
+    .band .img{background-size:cover;background-position:center;filter:grayscale(.55) sepia(.12) contrast(1.05) brightness(.97)}
+    @media(max-width:820px){.band{grid-template-columns:1fr}.band .img{min-height:40vh}}
+
+    /* ============================================================
+       MOTION SYSTEM — same zero-dependency system as index.html.
+       Layer 1: scroll-linked (animation-timeline: view()), off the
+                main thread where supported.
+       Layer 2: IntersectionObserver, only as the fallback.
+       Auto-stagger via --i, assigned in the script from DOM order.
+       ============================================================ */
+    .reveal{opacity:0;transform:translateY(var(--rise))}
+
+    @supports (animation-timeline: view()) {
+      .reveal{animation:rise linear both;animation-timeline:view();
+              animation-range:entry 4% cover 20%}
+      @keyframes rise{to{opacity:1;transform:none}}
+      /* calc() goes inside the range, after the range-name */
+      .items>.reveal,.mods>.reveal,.metrics>.reveal{
+        animation-range-start:entry calc(4% + var(--i,0) * 3%);
+        animation-range-end:cover calc(20% + var(--i,0) * 3%)}
+    }
+
+    /* Fallback. .js-reveal is set only when the native path is absent,
+       so the two never both animate the same element. */
+    .js-reveal .reveal{transition:opacity var(--dur-slow) var(--ease-out),
+                                 transform var(--dur-slow) var(--ease-out);
+                       transition-delay:calc(var(--i,0) * var(--stagger))}
+    .js-reveal .reveal.in{opacity:1;transform:none}
+
+    @media(prefers-reduced-motion:reduce){
+      .reveal{opacity:1;transform:none;animation:none}
+    }
+
+    /* CTA + footer */
+    .cta-band{text-align:center;padding-block:var(--space-l)}
+    .cta-band h2{max-width:20ch;margin-inline:auto}
+    .cta-band p{margin-inline:auto;margin-top:var(--space-s)}
+    .cta-band--photo{color:var(--paper);background:linear-gradient(rgba(20,22,24,.72),rgba(20,22,24,.88)),url("images/06-cranes-lowangle_DanistSoh.jpg") center/cover no-repeat}
+    .cta-band--photo h2{color:#fff}
+    .cta-band--photo p{color:rgba(255,255,255,.8)}
+    footer{background:#0d0e10;color:rgba(255,255,255,.55);padding-block:var(--space-m);font-size:.85rem}
+    footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space-s)}
+    .cookie-note{margin:0;font-size:var(--caption);letter-spacing:var(--tracking-caption);
+      text-transform:uppercase;color:rgba(255,255,255,.4);max-width:34ch}
+    .draft-flag{position:fixed;bottom:14px;right:14px;z-index:60;background:var(--error);color:#fff;font-size:.7rem;letter-spacing:.05em;padding:.4em .8em;border-radius:2px;font-family:var(--font-text);opacity:.9}
+  </style>
+</head>
+<body>
+
+  <!-- Page atmosphere: the same fixed low-light gradient wash as the
+       homepage (bg.css), so the two pages share a ground. Static,
+       no SVG and no JS. Decorative. -->
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- Icon sprite (thin-stroke, 24×24 viewBox) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-2h5L16 7"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4M9 14l2 2 4-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 5h11M4 10h11M4 15h7"/><path d="M15 17l2 2 4-5"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 15a8 8 0 1116 0"/><path d="M12 15l4-3"/><circle cx="12" cy="15" r="1"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><circle cx="8" cy="9" r="2.5"/><circle cx="16" cy="9" r="2.5"/><path d="M4 19c0-2.5 2-4 4-4s4 1.5 4 4M13 19c0-2.5 2-4 4-4s4 1.5 4 4"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v2H9z"/><path d="M9 11l1.5 1.5L13 10M9 16h5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 15H3z"/><path d="M12 10v4M12 17h.01"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M8 15l3-4 3 2 4-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M3 8l4-2 5 3 5-3 4 2M12 9v3"/><path d="M7 12l3 3 2-2 3 3M4 14l3 3M17 15l3-3"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v10M9.5 9.5h4a1.8 1.8 0 010 3.6h-3a1.8 1.8 0 000 3.6h4"/></symbol>
+    <symbol id="i-recycle" viewBox="0 0 24 24"><path d="M7 8l-3 5 4 1M7 8l3-4 3 5M17 8l3 5-4 3M17 16H9l2-3"/></symbol>
+  </svg>
+
+  <nav class="nav">
+    <a href="index.html" class="logo">◐ finaz</a>
+    <div class="links">
+      <a href="index.html#services" class="txtlink">Услуги</a>
+      <a href="index.html#industries" class="txtlink">Отрасли</a>
+      <a href="#cta" class="btn">Обсудить проект</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="kicker reveal">Решение для строительства</p>
+      <h1 class="reveal">Интеллектуальный<br>контроль строительства</h1>
+      <p class="lede reveal">ИИ видит объект целиком - от проектирования до сдачи.
+        Прозрачный контроль стройки, который работает на эффективность бизнеса.</p>
+    </div>
+  </header>
+
+  <!-- Tasks -->
+  <section class="section section--alt" id="tasks">
+    <div class="wrap">
+      <p class="eyebrow reveal">Задачи</p>
+      <h2 class="reveal">Какие задачи решает система</h2>
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-camera"/></svg></span><span class="num">[01]</span><h3>Прозрачность и доказательная база</h3><p>Фото- и видеофиксация каждого этапа с привязкой к дате, зоне и работе.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-calendar"/></svg></span><span class="num">[02]</span><h3>Планирование и контроль сроков</h3><p>Автоматическое построение и пересчёт графиков; отклонение видно в момент возникновения.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-check"/></svg></span><span class="num">[03]</span><h3>Объективный контроль качества</h3><p>Сравнение факта на площадке с проектной документацией - отступления видны сразу.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[04]</span><h3>Мониторинг прогресса</h3><p>Централизованный сбор данных с объектов и лабораторий в единую картину - без ручного сведения таблиц.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-people"/></svg></span><span class="num">[05]</span><h3>Координация участников</h3><p>Единое пространство для подрядчиков, инженеров и заказчика с синхронизацией в реальном времени.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-clipboard"/></svg></span><span class="num">[06]</span><h3>Стандартизация приёмки</h3><p>Голосовые инструкции, чек-листы и автоматические тикеты на несоответствия.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image band -->
+  <section class="band">
+    <div class="txt">
+      <div style="max-width:32rem;margin-left:auto;padding-right:var(--space-m)">
+        <p class="eyebrow reveal">Как это работает</p>
+        <h2 class="reveal">Ключевые функции стройки - в одной системе</h2>
+        <p class="reveal">Планирование, контроль качества, приёмка, работа с подрядчиками и аналитика
+          собраны в одну модель объекта. Существующие системы - ERP, BIM, учёт - остаются на месте:
+          мы их не заменяем, а связываем.</p>
+      </div>
+    </div>
+    <div class="img" style="background-image:url('images/07-dashboard-analytics.jpg')"></div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="wrap">
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-database"/></svg></span><span class="num">[01]</span><h3>Сбор и интеграция данных</h3><p>Зоны работ, спецификации, проектная документация, телеметрия техники и отчёты подключаются к единой модели объекта.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-calendar"/></svg></span><span class="num">[02]</span><h3>Интегрированное планирование</h3><p>Автоматическое построение и пересчёт графиков на данных всех участников - в среде без программирования.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-eye"/></svg></span><span class="num">[03]</span><h3>Мониторинг сроков</h3><p>Прогресс на площадке считывается компьютерным зрением и сверяется с графиком.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-check"/></svg></span><span class="num">[04]</span><h3>Контроль качества</h3><p>Голосовые инструкции и чек-листы при приёмке, автоматические тикеты на несоответствия с адресатом и сроком.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-people"/></svg></span><span class="num">[05]</span><h3>Взаимодействие с подрядчиками</h3><p>Подрядчики и смежники работают в одном пространстве: выдача заданий, приёмка объёмов, статусы и отклонения видны заказчику и генподрядчику в реальном времени.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-alert"/></svg></span><span class="num">[06]</span><h3>Проактивное управление аномалиями</h3><p>Погода, срывы поставок, отставание смежников - риск подсвечивается заранее.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chart"/></svg></span><span class="num">[07]</span><h3>BI-аналитика</h3><p>Портфель проектов в реальном времени: сроки, бюджет, качество, узкие места - в одном экране.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results (dark, directional) -->
+  <section class="section section--dark">
+    <span class="glow"></span>
+    <div class="wrap">
+      <p class="eyebrow reveal">Результаты</p>
+      <h2 class="reveal">Что меняется</h2>
+      <div class="items">
+        <div class="item reveal"><span class="ico"><svg><use href="#i-clock"/></svg></span><span class="num">[01]</span><h3>Сроки под контролем</h3><p>Отставание видно в момент возникновения, а не постфактум - меньше срывов графика.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-handshake"/></svg></span><span class="num">[02]</span><h3>Быстрее согласования с подрядчиками</h3><p>Задания, объёмы и приёмка в одном контуре - без сверки версий по почте.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-coin"/></svg></span><span class="num">[03]</span><h3>Дешевле контроль качества</h3><p>Отступления от проекта подсвечиваются сразу, пока их дёшево исправить.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-recycle"/></svg></span><span class="num">[04]</span><h3>Меньше переделок</h3><p>Раннее выявление отклонений снижает объём работ, которые приходится переделывать.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-band cta-band--photo" id="cta">
+    <div class="wrap">
+      <p class="eyebrow reveal" style="text-align:center">Следующий шаг</p>
+      <h2 class="reveal">Покажем на данных одного вашего объекта, где теряются сроки и деньги</h2>
+      <p class="reveal">И что из этого можно закрыть в первые недели.</p>
+      <div class="reveal" style="margin-top:var(--space-m)">
+        <a href="https://t.me/finazamat" class="btn btn--solid">Обсудить проект →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <a href="index.html">◐ finaz</a>
+      <span>Платформа не названа по договорённости с клиентом · 2026</span>
+      <p class="cookie-note">Сайт не использует cookies и не собирает
+        данные о посетителях.</p>
+    </div>
+  </footer>
+
+  <script>
+  (()=>{
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* 1. Auto-stagger: index every child of a revealing group. */
+    document.querySelectorAll(".items,.mods,.metrics,.hero .wrap,.txt")
+      .forEach(g=>[...g.children].forEach((el,i)=>el.style.setProperty("--i",i)));
+
+    /* 2. Reveal. The observer runs ONLY where scroll-linked animation
+          is unsupported, so the two paths never both fire. */
+    if(!CSS.supports("animation-timeline: view()") && !reduce){
+      document.documentElement.classList.add("js-reveal");
+      const io=new IntersectionObserver(es=>{
+        for(const e of es) if(e.isIntersecting){
+          e.target.classList.add("in");io.unobserve(e.target);
+        }
+      },{threshold:.12,rootMargin:"0px 0px -6% 0px"});
+      document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+    }
+
+    /* 3. Nav state. rAF-throttled. */
+    const nav=document.querySelector(".nav");
+    let queued=false;
+    const frame=()=>{queued=false;nav.classList.toggle("scrolled",scrollY>40)};
+    addEventListener("scroll",()=>{if(!queued){queued=true;requestAnimationFrame(frame)}},{passive:true});
+    frame();
+  })();
+  </script>
+</body>
+</html>
