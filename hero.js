@@ -39,32 +39,33 @@
   let parts = [];
   let t0 = 0;
 
-  // Smooth flow field: angle at (x,y) at time t. Layered sines give
-  // curved, organic streamlines that slowly reshape.
+  // Flow field: LEFT→RIGHT data streams. The base direction is +x (angle 0),
+  // with a small vertical undulation so the streams read as wavy ribbons of
+  // data rather than straight rules. The undulation drifts in time.
   function angle(x, y, t) {
     const nx = x / W, ny = y / H;
-    return (
-      Math.sin(nx * 3.1 + t * 0.06) * 1.5 +
-      Math.cos(ny * 2.6 - t * 0.05) * 1.2 +
-      Math.sin((nx + ny) * 2.2 + t * 0.03) * 0.9
-    ) + 0.15; // slight rightward bias so the flow drifts across-frame
+    const wobble =
+      Math.sin(ny * 5.0 + nx * 2.2 - t * 0.5) * 0.28 +
+      Math.sin(ny * 2.3 - t * 0.32) * 0.18;
+    return wobble; // ~0 rad → moving right, wobble tilts it up/down
   }
 
-  // Right-weight: 0 on the left third (behind the headline), rising to 1
-  // on the right. Squared for a soft toe.
+  // Left→right brightness ramp: near-invisible behind the headline (left),
+  // rising to full on the right. Squared for a soft toe.
   function weight(x) {
-    const t = Math.min(Math.max((x / W - 0.30) / 0.70, 0), 1);
+    const t = Math.min(Math.max((x / W - 0.18) / 0.82, 0), 1);
     return t * t;
   }
 
   let seed = 20;
   const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
 
-  function spawn(p) {
-    // bias spawns to the right so the density lives away from the copy
-    p.x = W * (0.32 + rnd() * 0.68);
+  function spawn(p, initial) {
+    // Streams enter from the LEFT and travel right. On respawn, start at the
+    // left edge; on first build, scatter across x so the field is full at t0.
+    p.x = initial ? rnd() * W : -20 - rnd() * 40;
     p.y = rnd() * H;
-    p.life = 60 + rnd() * 140;   // frames before respawn (keeps lines finite)
+    p.life = 200 + rnd() * 260;  // long enough to cross the frame
     p.age = 0;
     return p;
   }
@@ -86,11 +87,11 @@
     bctx.lineCap = 'round';
 
     seed = 20;
-    const count = Math.round(Math.min(560, (W * H) / 2600));
+    const count = Math.round(Math.min(320, (W * H) / 4200));
     parts = [];
     for (let i = 0; i < count; i++) {
-      const p = spawn({});
-      p.age = rnd() * p.life;   // desync so no synchronized respawn pulse
+      const p = spawn({}, true);   // initial: scatter across the frame
+      p.age = rnd() * p.life;      // desync so no synchronized respawn pulse
       parts.push(p);
     }
   }
@@ -100,15 +101,16 @@
     bctx.save();
     bctx.setTransform(1, 0, 0, 1, 0, 0);
     bctx.globalCompositeOperation = 'destination-out';
-    bctx.fillStyle = `rgba(0,0,0,${1 - Math.pow(0.5, dt / 0.5)})`; // ~0.5s half-life
+    bctx.fillStyle = `rgba(0,0,0,${1 - Math.pow(0.5, dt / 1.4)})`; // ~1.4s half-life → long ribbons
     bctx.fillRect(0, 0, buf.width, buf.height);
     bctx.restore();
 
     // 2. Advect particles, draw new trail segments.
     bctx.globalCompositeOperation = 'source-over';
-    const speed = 42;                 // px/s - calm flow
-    // travelling brightness wave: a diagonal band sweeping right→left→right
-    const wavePos = (Math.sin(t * 0.28) * 0.5 + 0.5); // 0..1 cycle ~22s
+    const speed = 70;                 // px/s - left→right drift
+    // travelling brightness wave: a band sweeping LEFT→RIGHT and wrapping,
+    // so pulses of light always move in the flow direction.
+    const wavePos = ((t * 0.10) % 1.3) - 0.15;        // -0.15..1.15, ~13s period
     for (const p of parts) {
       const a = angle(p.x, p.y, t);
       const vx = Math.cos(a), vy = Math.sin(a);
@@ -123,9 +125,9 @@
         const cr = COOL[0] + (HOT[0] - COOL[0]) * hot;
         const cg = COOL[1] + (HOT[1] - COOL[1]) * hot;
         const cb = COOL[2] + (HOT[2] - COOL[2]) * hot;
-        const alpha = w * (0.10 + 0.42 * hot);            // lines glow as wave hits
+        const alpha = w * (0.22 + 0.55 * hot);            // brighter resting glow + wave lift
         bctx.strokeStyle = `rgba(${cr|0},${cg|0},${cb|0},${alpha})`;
-        bctx.lineWidth = 0.9 + 1.1 * hot;
+        bctx.lineWidth = 1.1 + 1.3 * hot;
         bctx.beginPath();
         bctx.moveTo(p.x, p.y);
         bctx.lineTo(nxs, nys);
@@ -133,8 +135,9 @@
       }
 
       p.x = nxs; p.y = nys; p.age += 1;
-      // respawn when old or off-canvas
-      if (p.age > p.life || p.x < W * 0.28 || p.x > W + 8 || p.y < -8 || p.y > H + 8) spawn(p);
+      // respawn once it exits right (or ages out / drifts off top-bottom):
+      // it re-enters from the left, keeping a continuous L→R stream.
+      if (p.age > p.life || p.x > W + 10 || p.y < -12 || p.y > H + 12) spawn(p);
     }
 
     // 3. Blit buffer onto the visible canvas (hero gradient shows through).
