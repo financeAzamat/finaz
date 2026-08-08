@@ -71,8 +71,9 @@
     /* Layer order in the hero: gradient (element bg) < aurora ::after <
        chip canvas (z1) < copy (z2). */
     #hero-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
-    /* Full-width flow: readability handled by the scrim painted inside the
-       canvas (hero.js), so no per-breakpoint opacity dimming needed. */
+    /* On phones the copy spans full width and the right-anchored 3D cloud
+       lands under the headline - fade it there so type wins. */
+    @media(max-width:720px){#hero-dots{opacity:.4}}
     /* Copy sits above the aurora ::after and the dot canvas. */
     .hero .wrap{position:relative;z-index:2}
     /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
@@ -384,12 +385,11 @@
   <section class="section" id="services">
     <div class="wrap">
       <p class="eyebrow reveal">Услуги</p>
-      <h2 class="reveal">Создаём системные решения на основе ИИ
-        для повышения эффективности вашего бизнеса</h2>
+      <h2 class="reveal">Системные ИИ-решения под задачи бизнеса</h2>
       <div class="items">
-        <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Поможем выбрать ключевые области, где ИИ даст наилучший результат, подберём сценарии применения и встроим в текущие бизнес-процессы.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Находим области, где ИИ окупается, подбираем сценарии и встраиваем в процессы.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-chip"/></svg></span><span class="num">[02]</span><h3>Искусственный интеллект для бизнеса</h3><p>Внедрим решения на основе ИИ: агентов, чат-ботов, системы прогнозирования и видеоаналитику.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[03]</span><h3>Аудит и внедрение под ключ</h3><p>Ведём проект от идеи до внедрения: технический аудит, анализ рисков, пути оптимизации. Честно говорим, где узкое место и что даст эффект первым.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[03]</span><h3>Аудит и внедрение под ключ</h3><p>Проект от идеи до внедрения: аудит, риски, приоритеты. Показываем, что даст эффект первым.</p></div>
       </div>
 
       <!-- Figure: the pipeline the four services add up to. Constructs
@@ -439,10 +439,10 @@
       <h2 class="reveal">Внедрим команду ИИ-агентов,
         встроенную в ваши процессы</h2>
       <div class="items">
-        <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[01]</span><h3>Рабочее пространство агентов</h3><p>Устанавливаемый набор агентов под ваши роли: один читает и измеряет, другой готовит и делает, решение остаётся за человеком. Не универсальный «рой», а роли под ваш процесс.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[01]</span><h3>Рабочее пространство агентов</h3><p>Набор агентов под ваши роли: один анализирует, другой готовит решение, человек утверждает.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-plug"/></svg></span><span class="num">[02]</span><h3>Подключены к вашим системам</h3><p>Доступ к вашим данным (БД, диск, тикеты) по принципу наименьших прав, только чтение по умолчанию. Работают внутри вашего контура.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[03]</span><h3>Измеримая надёжность</h3><p>Каждое пространство поставляется с оценкой качества (eval): фиксированный набор задач и планка надёжности по каждому агенту. Надёжность измерена, а не обещана.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[04]</span><h3>Вы владеете результатом</h3><p>Устанавливаете и владеете сами — без привязки к подрядчику. Наша ценность в архитектуре и проверке качества, а не в замке на дверь.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[03]</span><h3>Измеримая надёжность</h3><p>Каждое пространство поставляется с оценкой качества (eval): фиксированный набор задач и планка надёжности по каждому агенту. Надёжность подтверждена на реальных задачах.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[04]</span><h3>Вы владеете результатом</h3><p>Решение устанавливается у вас и принадлежит вам. Наша ценность — архитектура и проверка качества.</p></div>
       </div>
     </div>
   </section>
@@ -451,11 +451,11 @@
   <section class="section" id="onprem">
     <div class="wrap">
       <p class="eyebrow reveal">ИИ в контуре (152-ФЗ)</p>
-      <h2 class="reveal">ИИ, который не выносит ваши данные наружу</h2>
+      <h2 class="reveal">ИИ, который работает внутри вашего периметра</h2>
       <div class="items">
-        <div class="item reveal"><span class="ico"><svg><use href="#i-lock"/></svg></span><span class="num">[01]</span><h3>Данные остаются в вашем периметре</h3><p>Персональные и финансовые данные нельзя гнать в зарубежные API. Разворачиваем совместимую архитектуру: on-premise или российское облако, данные в юрисдикции РФ.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-lock"/></svg></span><span class="num">[01]</span><h3>Данные остаются в вашем периметре</h3><p>Персональные и финансовые данные остаются в юрисдикции РФ. Разворачиваем совместимую архитектуру: on-premise или российское облако.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-database"/></svg></span><span class="num">[02]</span><h3>Варианты развёртывания</h3><p>Своя GPU-машина, российское облако (152-ФЗ) или маскирование данных перед отправкой в модель — под ваш уровень чувствительности и бюджет.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[03]</span><h3>Честный объём задач</h3><p>Локальные модели закрывают ограниченные приватные задачи: категоризация, извлечение данных, внутренний поиск и Q&A. Не обещаем паритет с фронтир-моделями там, где его нет.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[03]</span><h3>Практичный набор задач</h3><p>Локальные модели уверенно закрывают приватные задачи: категоризацию, извлечение данных, внутренний поиск и Q&A — там, где важна конфиденциальность.</p></div>
       </div>
     </div>
   </section>
@@ -464,8 +464,7 @@
   <section class="section section--alt" id="llm">
     <div class="wrap">
       <p class="eyebrow reveal">Разработка ИИ-решений</p>
-      <h2 class="reveal">Внедряем передовые языковые модели (LLM)
-        под задачи бизнеса, разворачиваем в облаке или на серверах клиента</h2>
+      <h2 class="reveal">Языковые модели (LLM) под задачи бизнеса — в облаке или на ваших серверах</h2>
       <div class="items">
         <div class="item reveal"><span class="ico"><svg><use href="#i-sliders"/></svg></span><span class="num">[01]</span><h3>Тонкая настройка под задачу</h3><p>Адаптируем YandexGPT, GigaChat, Llama, Qwen, DeepSeek и другие модели под ваши данные и отраслевую специфику.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-chat"/></svg></span><span class="num">[02]</span><h3>Решения на базе LLM</h3><p>Чат-боты и ассистенты, поиск по документам (RAG), анализ тональности, распознавание речи - под конкретный процесс.</p></div>
@@ -486,14 +485,13 @@
     <div class="wrap">
       <p class="eyebrow reveal">Внедрение</p>
       <h2 class="reveal">От задачи до работающего MVP</h2>
-      <p class="lead reveal">Внедрим пилотный ИИ проект от задачи до работающего MVP
-        за 14 дней.</p>
+      <p class="lead reveal">Пилот от задачи до работающего MVP за 14 дней.</p>
       <div class="items">
         <div class="item reveal"><span class="ico"><svg><use href="#i-search"/></svg></span><span class="num">[01]</span><h3>Диагностика и приоритизация</h3><p>Разбираем процессы и находим ключевые области бизнеса, где ИИ окупится.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-calc"/></svg></span><span class="num">[02]</span><h3>Финмодель и целевая архитектура</h3><p>Считаем эффект в деньгах и проектируем решение под контур заказчика: безопасность, интеграции, роли и доступы.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-rocket"/></svg></span><span class="num">[03]</span><h3>MVP с бизнес-ценностью</h3><p>Создаём пилот с чёткими критериями успеха.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[04]</span><h3>Масштабирование и платформа</h3><p>Трансформируем пилот в полноценный продукт для бизнеса.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[05]</span><h3>Измерение эффекта и портфель</h3><p>Отчёт «до / после» на реальных метриках, мониторинг после запуска, приоритизация следующих инициатив.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[04]</span><h3>Масштабирование и платформа</h3><p>Превращаем пилот в рабочий продукт.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-gauge"/></svg></span><span class="num">[05]</span><h3>Измерение эффекта и портфель</h3><p>Отчёт «до / после» на метриках, мониторинг, приоритеты следующих шагов.</p></div>
       </div>
 
       <!-- Figure: the 10-day schedule as a real gantt, not a metaphor.
@@ -568,10 +566,10 @@
       <p class="eyebrow reveal">Кейсы</p>
       <h2 class="reveal">Обезличенные результаты</h2>
       <div class="ex">
-        <a href="case.html" class="card reveal"><span class="tag">Стройконтроль</span><h3>Контроль строительных работ</h3><p>ИИ сверяет заявленные объёмы и стоимость (КС-2/КС-3) со сметой, находит приписки, внесметные позиции и завышение цен. Поставляется с проверкой качества на подложенных расхождениях — надёжность измерена.</p><span class="case-link">Смотреть кейс →</span></a>
+        <a href="case.html" class="card reveal"><span class="tag">Стройконтроль</span><h3>Контроль строительных работ</h3><p>Сверяет объёмы и стоимость (КС-2/КС-3) со сметой, находит приписки, внесметные позиции и завышение цен.</p><span class="case-link">Смотреть кейс →</span></a>
         <div class="card reveal"><span class="tag">Отзывы</span><h3>Анализ отзывов и тональности</h3><p>Обработка тысяч отзывов: тональность, категоризация, ключевые тренды. Снимает ручные операции и подсвечивает, что чинить в продукте и сервисе.</p></div>
         <div class="card reveal"><span class="tag">HR-аналитика</span><h3>Аналитика опросов сотрудников</h3><p>Автоматическая обработка обратной связи: тональность, ключевые темы, детализированный отчёт в дашборде.</p></div>
-        <div class="card reveal"><span class="tag">Поддержка</span><h3>Автоматизация первой линии</h3><p>AI-агент принимает запросы из разных каналов, отвечает на типовые и маршрутизирует по отделам - меньше нагрузка, в разы короче время ответа.</p></div>
+        <div class="card reveal"><span class="tag">Поддержка</span><h3>Автоматизация первой линии</h3><p>Агент принимает запросы из всех каналов, отвечает на типовые и маршрутизирует — меньше нагрузка, короче время ответа.</p></div>
       </div>
     </div>
   </section>
@@ -592,9 +590,7 @@
     <div class="wrap">
       <p class="eyebrow reveal">О нас</p>
       <h2 class="reveal">10 лет помогаем компаниям расти</h2>
-      <p class="lead reveal">Внедряем решения, перестраиваем процессы и ставим
-        аналитику в основу решений. Работаем до результата, который видно
-        в цифрах бизнеса.</p>
+      <p class="lead reveal">Внедряем решения, перестраиваем процессы, ставим аналитику в основу. Работаем до результата в цифрах.</p>
 
       <div class="founder reveal">
         <div class="founder-photo">
@@ -602,10 +598,7 @@
         </div>
         <div class="founder-bio">
           <p class="founder-name">Азамат Сатывалдиев, основатель компании</p>
-          <p>15+ лет опыта в финансах, аналитике и оптимизации бизнес-процессов
-            в топ-корпорациях. Руководил командой по внедрению ИИ-решений
-            в финансах в Amazon. Более 50 решений для бизнеса. MBA INSEAD,
-            кандидат экономических наук.</p>
+          <p>15+ лет в финансах, аналитике и оптимизации процессов в топ-корпорациях. Руководил внедрением ИИ в финансах в Amazon. 50+ решений для бизнеса. MBA INSEAD, кандидат экономических наук.</p>
         </div>
       </div>
     </div>
@@ -615,7 +608,7 @@
   <section class="section cta-band cta-band--grad" id="cta">
     <div class="wrap">
       <p class="eyebrow reveal">Следующий шаг</p>
-      <h2 class="reveal">Разберём вашу задачу и предложим решение с оптимальной окупаемостью</h2>
+      <h2 class="reveal">Обсудим задачу и предложим решение с расчётом окупаемости</h2>
       <div class="reveal" style="margin-top:var(--space-m)">
         <a href="https://t.me/finazamat" class="btn btn--solid">Обсудить задачу →</a>
       </div>
