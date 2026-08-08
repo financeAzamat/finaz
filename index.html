@@ -71,9 +71,8 @@
     /* Layer order in the hero: gradient (element bg) < aurora ::after <
        chip canvas (z1) < copy (z2). */
     #hero-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
-    /* On phones the copy column spans the full width, so the chip sits
-       under the headline. Fade the canvas back there so type always wins. */
-    @media(max-width:720px){#hero-dots{opacity:.5}}
+    /* Full-width flow: readability handled by the scrim painted inside the
+       canvas (hero.js), so no per-breakpoint opacity dimming needed. */
     /* Copy sits above the aurora ::after and the dot canvas. */
     .hero .wrap{position:relative;z-index:2}
     /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
@@ -81,9 +80,9 @@
     .hero .lede{color:rgba(255,255,255,.82);font-size:clamp(1.05rem,2.4vw,1.2rem);margin-top:var(--space-s);max-width:56ch}
     .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
     .kicker{font-family:var(--font-text);color:#fff;opacity:.7;margin-bottom:var(--space-s)}
-    /* Hero kicker is bumped off the 10px caption tier - it reads as a
+    /* Hero kicker is bumped well off the 10px caption tier - it reads as a
        standfirst above the H1, not a micro-label. */
-    .hero .kicker{font-size:.82rem;letter-spacing:.14em;opacity:.78}
+    .hero .kicker{font-size:clamp(.95rem,1.7vw,1.2rem);letter-spacing:.12em;opacity:.82}
 
     /* Sections + smooth seams between blocks */
     .section{padding-block:var(--section-v);position:relative}
@@ -357,8 +356,6 @@
     <a href="index.html" class="logo">◐ finaz AI</a>
     <div class="links">
       <a href="#services" class="txtlink">Услуги</a>
-      <a href="#agents" class="txtlink">ИИ-агенты</a>
-      <a href="#onprem" class="txtlink">ИИ в контуре</a>
       <a href="#cases" class="txtlink">Кейсы</a>
       <a href="#about" class="txtlink">О нас</a>
       <a href="#cta" class="btn">Обсудить задачу</a>
@@ -390,10 +387,9 @@
       <h2 class="reveal">Создаём системные решения на основе ИИ
         для повышения эффективности вашего бизнеса</h2>
       <div class="items">
-        <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Помогаем выбрать ключевые области, где ИИ даст наилучший результат. Анализируем, подбираем сценарии применения и встраиваем технологии в текущие бизнес-процессы.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-chip"/></svg></span><span class="num">[02]</span><h3>Искусственный интеллект для бизнеса</h3><p>Разрабатываем и внедряем решения на основе LLM и ИИ, привязанные к ROI: агентов, чат-ботов, системы прогнозирования и видеоаналитику.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-chart"/></svg></span><span class="num">[03]</span><h3>Аналитика и прогнозирование</h3><p>Прогнозирование спроса, управление запасами, ценообразование. Внедряем аналитические системы там, где ручной расчёт уже не тянет объём данных.</p></div>
-        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[04]</span><h3>Аудит и внедрение под ключ</h3><p>Ведём проект от идеи до внедрения: технический аудит, анализ рисков, пути оптимизации. Честно говорим, где узкое место и что даст эффект первым.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-compass"/></svg></span><span class="num">[01]</span><h3>Консалтинг по внедрению ИИ</h3><p>Поможем выбрать ключевые области, где ИИ даст наилучший результат, подберём сценарии применения и встроим в текущие бизнес-процессы.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-chip"/></svg></span><span class="num">[02]</span><h3>Искусственный интеллект для бизнеса</h3><p>Внедрим решения на основе ИИ: агентов, чат-ботов, системы прогнозирования и видеоаналитику.</p></div>
+        <div class="item reveal"><span class="ico"><svg><use href="#i-shield"/></svg></span><span class="num">[03]</span><h3>Аудит и внедрение под ключ</h3><p>Ведём проект от идеи до внедрения: технический аудит, анализ рисков, пути оптимизации. Честно говорим, где узкое место и что даст эффект первым.</p></div>
       </div>
 
       <!-- Figure: the pipeline the four services add up to. Constructs
@@ -440,8 +436,8 @@
   <section class="section section--alt" id="agents">
     <div class="wrap">
       <p class="eyebrow reveal">ИИ-агенты</p>
-      <h2 class="reveal">Не «бот», а команда ИИ-агентов,
-        встроенная в ваши процессы — и вы ей владеете</h2>
+      <h2 class="reveal">Внедрим команду ИИ-агентов,
+        встроенную в ваши процессы</h2>
       <div class="items">
         <div class="item reveal"><span class="ico"><svg><use href="#i-layers"/></svg></span><span class="num">[01]</span><h3>Рабочее пространство агентов</h3><p>Устанавливаемый набор агентов под ваши роли: один читает и измеряет, другой готовит и делает, решение остаётся за человеком. Не универсальный «рой», а роли под ваш процесс.</p></div>
         <div class="item reveal"><span class="ico"><svg><use href="#i-plug"/></svg></span><span class="num">[02]</span><h3>Подключены к вашим системам</h3><p>Доступ к вашим данным (БД, диск, тикеты) по принципу наименьших прав, только чтение по умолчанию. Работают внутри вашего контура.</p></div>
