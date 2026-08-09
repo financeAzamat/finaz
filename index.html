@@ -166,13 +166,13 @@
        ABOVE the canvas (z2) and below the copy (z3). */
     .hero::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
       background:linear-gradient(100deg,rgba(0,2,6,.86) 0%,rgba(0,2,6,.55) 34%,rgba(0,2,6,0) 62%)}
-    @media(max-width:720px){.hero::before{background:linear-gradient(rgba(0,2,6,.4),rgba(0,2,6,.82))}}
+    @media(max-width:720px){.hero::before{background:linear-gradient(rgba(0,2,6,.30),rgba(0,2,6,.70))}}
     /* Layer order in the hero: gradient (element bg) < nebula ::after <
        canvas (z1) < scrim ::before (z2) < copy (z3). */
     #hero-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
     /* On phones the copy spans full width and the right-anchored object
        lands under the headline - fade it there so type wins. */
-    @media(max-width:720px){#hero-dots{opacity:.45}}
+    @media(max-width:720px){#hero-dots{opacity:.8}}
     .hero .wrap{position:relative;z-index:3}
     /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
     .hero h1{max-width:19ch;color:var(--ink-2)}
