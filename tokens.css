@@ -1,36 +1,116 @@
 /* ============================================================
-   Design tokens — extracted from palantir.com (2026-08-02)
-   Palantir-INSPIRED. Colors + type scale are the recipe, not
-   the dish. Fonts here are FREE substitutes (their Alliance
-   faces are proprietary — do not re-host those).
+   Design tokens — SPACE variant.
+   ------------------------------------------------------------
+   Structure (type ladder, spacing rhythm, motion budget) is
+   unchanged from the light Palantir-inspired original — that
+   part was measured and works. What changes is the surface
+   model: this variant is DARK-FIRST. Deep black and midnight
+   blue are the page, not an accent band inside it, so the
+   space treatment carries across every page instead of living
+   only in the hero.
+
+   Palette is the brief's and only the brief's: deep black,
+   midnight blue, navy, blue-white starlight, soft cyan,
+   restrained violet, and a very sparing warm gold. No neon,
+   no heavy purple.
+
+   Naming is deliberately kept: --paper still means "the page"
+   and --ink still means "text on the page", they have simply
+   swapped luminance. Every rule written against the light
+   tokens keeps working; nothing had to be renamed.
    ============================================================ */
 :root {
-  /* --- Color (from their --nhs-* / --qualitative-* vars) --- */
-  --ink:            #1e2124;   /* primary text / near-black */
-  --ink-2:          #202426;   /* darkest surface */
-  --paper:          #ffffff;
-  --paper-soft:     #f9f9f9;
-  --paper-2:        #f3f3f3;
-  --line:           #dbdbdb;
-  --muted:          #767676;
-  --muted-2:        #636363;
+  /* --- Color --- */
+  --ink:            #eaf0fb;   /* primary text — blue-white, not pure white */
+  --ink-2:          #f4f8ff;   /* brightest text, for headlines */
+  --paper:          #05070d;   /* the page: deep black with a blue cast */
+  --paper-soft:     #080c16;   /* alternate band */
+  --paper-2:        #0c121f;   /* raised surface / card */
+  --line:           rgba(150,178,225,.16);   /* hairline, must survive on black */
+  --muted:          #8fa2c4;
+  --muted-2:        #74869f;
 
-  --accent:         #2b5945;   /* Palantir green */
-  --accent-10:      rgba(43,89,69,.10);
-  --accent-05:      rgba(43,89,69,.05);
-  --link:           #4e8af7;
-  --link-hover:     rgba(78,138,247,.33);
-  --error:          #ff4136;
+  /* Light surfaces still needed in places (the founder card, figure fills).
+     Kept as explicit tokens so nothing reaches for #fff directly. */
+  --surface-lift:   rgba(150,190,255,.05);
+  --surface-lift-2: rgba(150,190,255,.09);
 
-  /* Blueprint-style qualitative set (charts / tags / accents) */
-  --q0:#147eb3; --q1:#29a634; --q2:#d1980b; --q3:#d13913; --q4:#634dbf;
-  --q5:#d17e09; --q6:#9f1239; --q7:#00a396; --q8:#5642a6; --q9:#728c23;
+  --accent:         #8ae0f4;   /* soft cyan — was Palantir green */
+  --accent-10:      rgba(138,224,244,.12);
+  --accent-05:      rgba(138,224,244,.06);
+  --accent-deep:    #4a86c8;   /* navy-leaning accent for fills behind text */
+  --violet:         #968ee0;   /* restrained, used once or twice */
+  --gold:           #ffc474;   /* city-light warm — accents only, never a field */
+  --link:           #8fc7ff;
+  --link-hover:     rgba(143,199,255,.33);
+  --error:          #ff6b62;
 
-  /* --- Type --- */
-  /* Their stack is "Alliance No.2" (display) + "Alliance No.1" (text).
-     Free substitutes with a similar geometric-grotesque feel: */
-  --font-display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-text:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Qualitative set, re-cast cool so charts and tags read on black */
+  --q0:#4aa3d8; --q1:#5ec9a8; --q2:#d8b25a; --q3:#e0785f; --q4:#968ee0;
+  --q5:#d89a5a; --q6:#d2617f; --q7:#5fc7bd; --q8:#7d8fe0; --q9:#9fbf6a;
+
+  /* --- Type ---
+     THREE roles, not two. Corrected 2026-08-09 (Kosmion rename).
+
+     Before this date --font-display claimed "Space Grotesk", which the
+     pages never loaded. Measured in the browser: document.fonts had no
+     Space Grotesk entry, and a 100px width probe returned exactly the
+     monospace fallback width (421.44px for both), so every heading was
+     silently rendering in Manrope via the inline `"Manrope", var(--font-display)`
+     override. The token was decoration. Two consequences worth keeping in
+     mind: Space Grotesk has NO Cyrillic subset on Google Fonts, so it could
+     never have set this site's copy anyway; and document.fonts.check()
+     returned TRUE for it regardless - check() answers "would this resolve",
+     not "is this face here", so it cannot detect a missing webfont. Width
+     probe against a known fallback is the only reliable test.
+
+     1. --font-wordmark  the name "Kosmion" and nothing else, ever.
+        Jost: a geometric humanist derived from Futura's skeleton - single-
+        storey 'a', near-circular 'o', a high-waisted 'K'. That geometry is
+        what makes the name read as constructed rather than typed, and it is
+        the one place on the site where a distinct face earns its cost.
+        Loaded via Google's `text=Kosmion` subset: 1,104 bytes for the six
+        glyphs (K,o,s,m,i,n) versus 10,140 for full latin. The tradeoff is
+        strict - ANY other character set in this face falls back silently.
+        See brand_kosmion.md; this is the one rule that file exists to protect.
+
+     2. --font-display   Cyrillic headings. Manrope, which is what was
+        actually rendering them all along. It has a real cyrillic + cyrillic-ext
+        subset, a 0.545 x-height ratio (measured) that holds at 16px, and it
+        is already paid for on this page. Declared honestly now instead of
+        being reached through an override.
+
+     3. --font-text      body copy. Inter, unchanged.
+
+     Jost is deliberately NOT in the display or text stack. Its x-height
+     ratio measures 0.465 against Inter's 0.550 - set as body copy at the
+     same px it reads ~15% smaller and loses Cyrillic entirely. */
+  --font-wordmark: "Space Grotesk", "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display:  "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-text:     "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* --- Wordmark lockup ---
+     The name is set ONE way across every surface. These four values are the
+     whole treatment; nothing else about the wordmark is negotiable per-page.
+
+     --wm-size is an optical correction, not a preference. Jost's x-height
+     ratio is 0.465 vs Manrope's 0.545 (both measured off canvas ink bounds,
+     2026-08-09), so at an equal px value Jost's lowercase sits ~15% shorter
+     than the nav links beside it and the wordmark reads as the smallest
+     thing in the bar. 1.22rem (19.5px) against 18.4px body-ish siblings
+     restores the optical match. A full x-height match would need 21.6px,
+     which overshoots - Jost's caps are only 3% shorter than Manrope's, so
+     matching the lowercase exactly makes the capital K tower over the row.
+
+     --wm-track is what the client actually asked for without naming it. The
+     old wordmark was Manrope 600 at -0.184px: a heavy face pulled tighter
+     than default. Tight + heavy is the setting of a UI label. Opening the
+     letters and dropping the weight is what makes a name read as an
+     identity, because the eye gets to see each letterform's geometry. */
+  --wm-size:   1.12rem;    /* uppercase Space Grotesk reads larger than Jost caps */
+  --wm-weight: 600;        /* Space Grotesk 600 gives the caps presence */
+  --wm-track:  0.06em;     /* spaced caps, tech feel (was 0.11em Jost) */
+  --wm-gap:    0.46em;     /* unused now the mark is gone; harmless */
 
   /* Type scale — a real ladder, no 1rem→5rem jump.
      Ratio ~1.25 through the middle, in rem @16px base.

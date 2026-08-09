@@ -1,26 +1,68 @@
 /* ============================================================
-   Page atmosphere — index.html + case.html
+   Page atmosphere — SPACE variant (index.html + case.html)
    ------------------------------------------------------------
-   This used to draw a generated neural-link mesh behind every section,
-   and later a lattice in the hero only. Both are gone: at any alpha that
-   made a drawn network visible it also competed with the type it sat
-   behind. What survives is the thing the mesh was really there for — a
-   low, soft light in the background instead of flat white.
+   This is the fixed layer that sits behind everything on both
+   pages, at z-index -1.
 
-   No SVG, no JS, no animation. Three static radial washes, fixed to the
-   viewport so they drift past as you scroll: a cool light top-right, the
-   brand green low-left, and a faint warm lift at the bottom. Cheap
-   enough to be free (one composited layer, painted once) and it cannot
-   compete with text, because nothing in it has an edge.
+   STARS REMOVED 2026-08-09, at the client's call: "on other
+   pages - remove stars - they pollute the picture, instead use
+   gradient in the same style". This file used to carry 110
+   individual radial-gradient star points behind the whole
+   document. He is right about why they had to go: behind body
+   copy and cards, a field of small bright dots competes with
+   every edge in front of it. In the hero a star field IS the
+   subject; behind a paragraph it is grain.
+
+   What replaces them is the same palette doing the same job
+   without the dots — depth, and a direction of light:
+
+     1. three nebula washes (midnight blue high right,
+        restrained violet low left, navy rising from below) —
+        these are unchanged, they were always the part that
+        made the black feel like space rather than #000;
+     2. a faint Milky Way band on the diagonal, kept and
+        slightly strengthened now that it no longer has to
+        compete with the points for the same attention;
+     3. one broad vertical tone so the page darkens toward the
+        bottom instead of being uniformly flat.
+
+   Nothing here has an edge, and nothing here animates. That is
+   the whole design rule of this layer, and the reason a drawn
+   mesh was tried and removed twice before the stars were: at
+   any alpha that made a network visible, it also competed with
+   the type sitting in front of it.
+
+   Still promoted with translateZ(0) so the gradients rasterise
+   once and merely composite while scrolling, never re-paint.
+   With the 110 points gone this layer is now genuinely cheap:
+   five gradients instead of a hundred and fifteen.
    ============================================================ */
 .bg{
   position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(58% 48% at 82% 6%,  rgba(43,89,69,.09) 0%, rgba(43,89,69,0) 68%),
-    radial-gradient(52% 46% at 10% 34%, rgba(88,116,140,.08) 0%, rgba(88,116,140,0) 70%),
-    radial-gradient(72% 40% at 50% 104%,rgba(43,89,69,.07) 0%, rgba(43,89,69,0) 72%);
+  transform:translateZ(0);
+  background-color:var(--paper);
+  background-image:
+    /* nebula: midnight blue high right, restrained violet low left.
+       Lifted a little (.16→.20, .10→.13, .13→.16) to carry the depth
+       the star points used to contribute. */
+    radial-gradient(62% 52% at 84% 4%,   rgba(74,134,200,.20) 0%, rgba(74,134,200,0) 70%),
+    radial-gradient(56% 50% at 8% 38%,   rgba(150,142,224,.13) 0%, rgba(150,142,224,0) 72%),
+    radial-gradient(78% 44% at 52% 106%, rgba(56,96,160,.16) 0%, rgba(56,96,160,0) 74%),
+    /* a cool wash top-left so the upper corner is not dead black where the
+       nav sits over it */
+    radial-gradient(48% 38% at 6% 2%,    rgba(74,134,200,.10) 0%, rgba(74,134,200,0) 76%),
+    /* Milky Way: one wide band on the diagonal. Still deliberately almost
+       invisible, just no longer the second-faintest thing in the layer. */
+    linear-gradient(196deg,
+      rgba(180,205,255,0) 34%,
+      rgba(180,205,255,.055) 47%,
+      rgba(210,225,255,.080) 52%,
+      rgba(180,205,255,.050) 57%,
+      rgba(180,205,255,0) 70%);
 }
 
+/* On a phone the type is denser and the viewport smaller, so the whole
+   atmosphere is dimmed rather than tuned separately. */
 @media(max-width:720px){
-  .bg{opacity:.7}
+  .bg{opacity:.72}
 }
