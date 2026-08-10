@@ -234,10 +234,15 @@
        and the type comes down a step because it no longer has the whole
        viewport height to itself. */
     @media(max-width:720px){
-      .hero{align-items:end;padding-bottom:12vh}
+      /* minmax(0,1fr) stops a long unbreakable word from sizing the auto grid
+         track to its min-content and pushing the whole column past the
+         viewport (this is what clipped case.html's headline). */
+      .hero{align-items:end;padding-bottom:12vh;grid-template-columns:minmax(0,1fr)}
+      .hero .wrap{width:100%}
       .hero h1{font-size:clamp(1.7rem,7.8vw,2.2rem);max-width:15ch}
       .hero .lede{max-width:30ch;font-size:1rem}
       .hero .kicker{font-size:.9rem}
+      h1,h2,h3{overflow-wrap:break-word}
     }
     .hero .lede{color:rgba(234,240,251,.80);font-size:clamp(1.05rem,2.4vw,1.2rem);margin-top:var(--space-s);max-width:56ch}
     .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}

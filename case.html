@@ -153,6 +153,32 @@
     .hero .wrap{position:relative;z-index:3}
     .hero h1{max-width:16ch}
     .hero .lede{color:rgba(234,240,251,.82);font-size:1.2rem;margin-top:var(--space-s);max-width:56ch}
+    /* Phone fix (2026-08-10): the headline was clipped off the right edge.
+       Two causes, both needed fixing:
+       1. the global h1 clamp floors at 2.6rem (~42px), so it never shrank on a
+          390px screen — and «Интеллектуальный» at that size is wider than the
+          viewport, with nowhere to break;
+       2. .hero is display:grid, and an auto track sizes to its child's
+          MIN-content. That one unbreakable word widened the whole track, so
+          .wrap grew past the viewport and dragged the lede out with it —
+          then overflow:hidden clipped both. minmax(0,1fr) is the fix: it lets
+          the track shrink below min-content instead of blowing out.
+       overflow-wrap is the backstop for any other long Russian compound. */
+    @media(max-width:720px){
+      .hero{grid-template-columns:minmax(0,1fr)}
+      /* width:100% matters: .wrap has margin-inline:auto, and auto margins on a
+         grid item suppress stretch — so the block was sized to its own content
+         and CENTRED, leaving an uneven indent instead of starting at the
+         gutter. Measured at 500px: wrap.left was 44px, not 0. */
+      .hero .wrap{width:100%}
+      /* Floor is 1.5rem, not 1.7: «Интеллектуальный» measures ~339px at 35.2px,
+         so at a 320px viewport a 1.7rem floor leaves only ~5px of slack —
+         inside the margin of error for font metrics. 1.5rem gives real room.
+         overflow-wrap above is still the last-resort backstop. */
+      .hero h1{font-size:clamp(1.5rem,7.8vw,2.2rem);max-width:15ch}
+      .hero .lede{font-size:1rem;max-width:34ch}
+      h1,h2,h3{overflow-wrap:break-word}
+    }
     .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
     .kicker{font-family:var(--font-text);color:var(--accent);opacity:.9;margin-bottom:var(--space-s)}
 
