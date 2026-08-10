@@ -84,8 +84,49 @@
     .logo--footer:hover{color:var(--ink-2)}
     .nav .links{display:flex;align-items:center;gap:var(--space-m)}
     .nav .links a.txtlink{font-size:var(--small)}
-    @media(max-width:720px){.nav .links a.txtlink{display:none}}
-    .btn{font-family:var(--font-text);font-size:var(--small);padding:.7em 1.3em;border:1px solid currentColor;border-radius:2px;background:transparent;color:inherit;cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease),transform var(--dur-fast) var(--ease);display:inline-block}
+
+    /* Mobile nav toggle — hidden on desktop; the checkbox + burger only come
+       into play at ≤720px, so the desktop bar keeps its exact layout. */
+    .nav-toggle{display:none}
+    .burger{display:none}
+
+    /* ≤720px: the links collapse into a tap-to-open dropdown under the fixed
+       72px bar, driven by the #nav-toggle checkbox. Replaces the old
+       `.txtlink{display:none}` rule, which hid the links with no way back. */
+    @media(max-width:720px){
+      /* The real control: visually hidden but still a keyboard tab-stop
+         (opacity:0, NOT display:none). Taps flow through the label. */
+      .nav-toggle{display:block;position:absolute;top:14px;right:var(--gutter);
+        width:44px;height:44px;margin:0;opacity:0;pointer-events:none}
+      /* Burger button: 44×44 tap target, three bars in currentColor. */
+      .burger{display:inline-flex;flex-direction:column;justify-content:center;
+        align-items:center;gap:5px;width:44px;height:44px;cursor:pointer;
+        border-radius:4px;color:inherit;-webkit-tap-highlight-color:transparent}
+      .burger span{display:block;width:24px;height:2px;background:currentColor;
+        border-radius:2px;transition:transform var(--dur) var(--ease),opacity var(--dur) var(--ease)}
+      /* Burger → X when open. */
+      .nav-toggle:checked ~ .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+      .nav-toggle:checked ~ .burger span:nth-child(2){opacity:0}
+      .nav-toggle:checked ~ .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+      /* Keyboard focus ring lands on the visible burger, not the hidden box. */
+      .nav-toggle:focus-visible ~ .burger{outline:2px solid var(--accent);outline-offset:2px}
+
+      /* Dropdown panel below the fixed 72px bar. Closed = collapsed. */
+      .nav .links{position:fixed;top:72px;left:0;right:0;flex-direction:column;
+        align-items:stretch;gap:0;padding:0 var(--gutter);
+        background:rgba(5,7,13,.96);backdrop-filter:blur(12px) saturate(140%);
+        border-bottom:1px solid var(--line);
+        max-height:0;opacity:0;overflow:hidden;pointer-events:none;
+        transition:max-height var(--dur) var(--ease),opacity var(--dur) var(--ease),padding var(--dur) var(--ease)}
+      .nav-toggle:checked ~ .links{max-height:80vh;opacity:1;pointer-events:auto;
+        padding-top:var(--space-s);padding-bottom:var(--space-s)}
+      /* txtlinks return as stacked, ≥44px rows. */
+      .nav .links a.txtlink{display:flex;align-items:center;min-height:44px;
+        font-size:1rem;padding:.4em 0;border-bottom:1px solid var(--line)}
+      /* CTA is a full-width block at the foot of the panel. */
+      .nav .links a.btn{width:100%;margin-top:var(--space-s)}
+    }
+    .btn{font-family:var(--font-text);font-size:var(--small);padding:.7em 1.3em;border:1px solid currentColor;border-radius:2px;background:transparent;color:inherit;cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease),transform var(--dur-fast) var(--ease);display:inline-flex;align-items:center;justify-content:center;min-height:44px;box-sizing:border-box}
     .btn:hover{background:var(--ink);color:var(--paper)}
     .nav.scrolled .btn:hover{background:var(--ink);color:var(--paper)}
     .btn:active{transform:translateY(1px)}
@@ -264,6 +305,12 @@
 
   <nav class="nav">
     <a href="index.html" class="logo" aria-label="Kosmion — на главную">KOSMION</a>
+    <!-- Mobile nav (≤720px): CSS-only checkbox hack. The input is the real
+         focusable control — visually hidden but NOT display:none, so it stays
+         a keyboard tab-stop; the label is the visible 44×44 burger. Desktop
+         hides both, so the .links row is unchanged there. -->
+    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <label for="nav-toggle" class="burger" aria-label="Меню" aria-expanded="false"><span></span><span></span><span></span></label>
     <div class="links">
       <a href="index.html#services" class="txtlink">Услуги</a>
       <a href="index.html#industries" class="txtlink">Отрасли</a>
@@ -392,6 +439,18 @@
     const frame=()=>{queued=false;nav.classList.toggle("scrolled",scrollY>40)};
     addEventListener("scroll",()=>{if(!queued){queued=true;requestAnimationFrame(frame)}},{passive:true});
     frame();
+
+    /* 4. Mobile nav: close the dropdown when any link inside it is tapped,
+          and keep the burger's aria-expanded in sync with the checkbox. */
+    const navToggle=document.getElementById("nav-toggle"),
+          burger=document.querySelector(".nav .burger");
+    if(navToggle){
+      const syncAria=()=>burger&&burger.setAttribute("aria-expanded",navToggle.checked?"true":"false");
+      navToggle.addEventListener("change",syncAria);
+      document.querySelectorAll(".nav .links a").forEach(a=>
+        a.addEventListener("click",()=>{navToggle.checked=false;syncAria();}));
+      syncAria();
+    }
   })();
   </script>
 </body>
