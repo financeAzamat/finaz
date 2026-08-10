@@ -208,16 +208,37 @@
        ABOVE the canvas (z2) and below the copy (z3). */
     .hero::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
       background:linear-gradient(100deg,rgba(0,2,6,.86) 0%,rgba(0,2,6,.55) 34%,rgba(0,2,6,0) 62%)}
-    @media(max-width:720px){.hero::before{background:linear-gradient(rgba(0,2,6,.30),rgba(0,2,6,.70))}}
+    /* Mobile scrim: the planet is in the upper right and the type is in the
+       lower half, so the darkening is now VERTICAL — clear across the top so
+       the globe stays bright, ramping to a solid base under the headline. The
+       old flat top-to-bottom wash dimmed the globe along with everything. */
+    @media(max-width:720px){.hero::before{background:
+      linear-gradient(rgba(0,2,6,0) 34%, rgba(0,2,6,.34) 52%, rgba(0,2,6,.74) 78%, rgba(0,2,6,.88) 100%)}}
     /* Layer order in the hero: gradient (element bg) < nebula ::after <
        canvas (z1) < scrim ::before (z2) < copy (z3). */
     #hero-dots{position:absolute;inset:0;z-index:1;pointer-events:none}
     /* On phones the copy spans full width and the right-anchored object
        lands under the headline - fade it there so type wins. */
-    @media(max-width:720px){#hero-dots{opacity:.8}}
+    /* Full brightness on a phone. The globe used to be dimmed to .45 (then .8)
+       because it sat behind the headline; now it lives on the right with the
+       copy on the left, so there is nothing to protect and no reason to fade
+       the planet. Per-dot dimming still handles any stray left-side dots
+       (see mask() in space.js). */
+    @media(max-width:720px){#hero-dots{opacity:1}}
     .hero .wrap{position:relative;z-index:3}
     /* 15ch was tuned for the 80px h1; at 56px it forces 3 short lines. */
     .hero h1{max-width:19ch;color:var(--ink-2)}
+    /* Phone: the planet owns the upper right, the copy owns the lower half.
+       align-items:end drops the text out from under the globe (the hero is a
+       centring grid by default, which put the headline straight through it),
+       and the type comes down a step because it no longer has the whole
+       viewport height to itself. */
+    @media(max-width:720px){
+      .hero{align-items:end;padding-bottom:12vh}
+      .hero h1{font-size:clamp(1.7rem,7.8vw,2.2rem);max-width:15ch}
+      .hero .lede{max-width:30ch;font-size:1rem}
+      .hero .kicker{font-size:.9rem}
+    }
     .hero .lede{color:rgba(234,240,251,.80);font-size:clamp(1.05rem,2.4vw,1.2rem);margin-top:var(--space-s);max-width:56ch}
     .hero .cta{margin-top:var(--space-m);display:flex;gap:var(--space-s);flex-wrap:wrap}
     .kicker{font-family:var(--font-text);color:var(--accent);opacity:.9;margin-bottom:var(--space-s)}

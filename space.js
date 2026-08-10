@@ -294,19 +294,36 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const wasPhone = phone;
     phone = W <= 720;
-    // The object (globe / galaxy / ring) is anchored right of the copy on
-    // desktop and centred on a phone, where the copy spans full width and
-    // CSS drops the canvas opacity instead.
-    R = phone ? Math.min(W * 0.40, H * 0.30) : Math.min((W - W * 0.60) / 2.05, H * 0.34);
+    // The object (globe / galaxy / ring) is anchored right of the copy on BOTH
+    // desktop and phone. It used to be centred on a phone, which put it behind
+    // the headline: the only way to keep the words legible was to dim it, and a
+    // dimmed globe under text reads as haze rather than a planet. Now the copy
+    // owns the left, the planet owns the right, and neither has to be faded.
+    //
+    // On a phone the globe deliberately BLEEDS off the right edge (cx beyond W
+    // minus a fraction of R): a 390px viewport cannot hold a whole sphere and a
+    // column of type side by side, so what shows is a large bright limb — the
+    // edge of a planet — instead of a small complete ball. Reads as intent.
+    // On a phone the globe sits in the UPPER RIGHT and the copy sits BELOW it,
+    // so the two separate vertically instead of competing for a 390px width.
+    // A first attempt pushed the sphere off the right edge entirely (cx beyond
+    // W) — with land-only, near-side-only dots that left a handful of specks on
+    // the edge, which read as dirt rather than a planet. Keep it mostly on
+    // screen: a little crop on the right is fine, a sliver is not.
+    R = phone ? Math.min(W * 0.50, H * 0.27) : Math.min((W - W * 0.60) / 2.05, H * 0.34);
     R = Math.max(96, R);
-    cx = phone ? W * 0.5 : W - Math.max(20, W * 0.015) - R;
-    cy = phone ? H * 0.40 : H * 0.50;
+    cx = phone ? W * 0.70 : W - Math.max(20, W * 0.015) - R;
+    cy = phone ? H * 0.29 : H * 0.50;
     if (wasPhone !== phone || !pos) build();
   }
 
   /* ---- copy protection. The field spans the whole hero, so its left end
          is dimmed under the headline. Type wins, always. ---- */
   function mask(sx) {
+    // No horizontal fade on a phone: the globe occupies the upper right and the
+    // copy sits underneath it, so the separation is VERTICAL and an x-based ramp
+    // would only dim the planet's own left limb for no reason. The scrim in the
+    // CSS handles the band where the type actually is.
     if (phone) return 1;
     const x0 = W * 0.24, x1 = W * 0.56;
     if (sx <= x0) return 0.26;
