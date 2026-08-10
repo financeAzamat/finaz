@@ -1,9 +1,32 @@
-# Apache config for Beget (or any Apache host). GitHub Pages ignores this file.
+# Apache config for REG.RU hosting (or any Apache host). GitHub Pages ignores
+# this file.
 #
+# Force HTTPS. The site has a Let's Encrypt certificate (issued 2026-08-10,
+# auto-renewing), so there is no reason to serve plain HTTP: a visitor on
+# http:// otherwise sees Chrome's "Not secure" label, and any form data would
+# cross the network unencrypted.
+#
+# HTTPS is detected two ways on purpose. %{HTTPS} is the direct check, but on
+# shared hosting the TLS often terminates at a proxy in front of Apache, which
+# passes X-Forwarded-Proto instead and leaves %{HTTPS} as "off" — without the
+# second condition that combination produces an infinite redirect loop.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  # One canonical hostname: www -> bare domain. The certificate covers both,
+  # so this is about not splitting the brand (and SEO) across two addresses.
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+</IfModule>
+
 # The site is deployed by checking the repo out INTO the web root, which puts a
 # .git directory inside a publicly served folder. Apache would happily serve
 # .git/config and .git/HEAD, so block every dotfile path outright. The repo is
 # public, so the exposure is low — but a served .git is still a bad default.
+# Verified working on REG.RU 2026-08-10: /.git/config returns 403.
 RedirectMatch 404 /\.git
 RedirectMatch 404 /\.htaccess
 <FilesMatch "^\.">
