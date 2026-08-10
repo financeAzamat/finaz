@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kosmion — ИИ-решения для бизнеса</title>
+  <title>KOSMION — ИИ-решения для бизнеса</title>
   <meta name="description" content="Создаём системные ИИ-решения: сначала диагностика процессов и финмодель эффекта, потом код. Фокус на измеримой ценности." />
   <!-- Favicon as an inline data-URI: the Kosmion mark, no extra file to serve
        and no 404 in the console when the browser asks for /favicon.ico.
@@ -14,12 +14,12 @@
        (brand_kosmion.md), not drift - if the path changes, change both.
        The favicon carries its own dark plate because the mark is cyan, which
        would vanish against a light browser-tab background. -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='g' cx='34%25' cy='28%25' r='85%25'%3E%3Cstop offset='0' stop-color='%231a2440'/%3E%3Cstop offset='1' stop-color='%2306080f'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='15' fill='url(%23g)'/%3E%3Ctext x='16' y='21.5' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='700' font-size='17' fill='%23eaf0ff'%3EK%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='g' cx='34%25' cy='28%25' r='85%25'%3E%3Cstop offset='0' stop-color='%231a2440'/%3E%3Cstop offset='1' stop-color='%2306080f'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='15' fill='url(%23g)'/%3E%3Cg fill='none' stroke='%238ae0f4' stroke-width='1.6'%3E%3Ccircle cx='16' cy='16' r='10.5'/%3E%3Cellipse cx='16' cy='16' rx='10.5' ry='4'/%3E%3Cellipse cx='16' cy='16' rx='4' ry='10.5'/%3E%3C/g%3E%3C/svg%3E" />
   <!-- Link preview for when the URL is pasted into Telegram/WhatsApp.
        og:url and og:image must be absolute - relative paths are not
        resolved by the scrapers. Update both if the domain changes. -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Kosmion — ИИ-решения для бизнеса" />
+  <meta property="og:title" content="KOSMION — ИИ-решения для бизнеса" />
   <meta property="og:description" content="15 лет помогаем компаниям расти: внедрение решений, перестройка процессов, аналитика в основе решений." />
   <meta property="og:url" content="https://financeazamat.github.io/finaz/" />
   <meta property="og:image" content="https://financeazamat.github.io/finaz/images/07-dashboard-analytics.jpg" />
@@ -28,7 +28,7 @@
        without it the browser keeps a stale copy after a deploy. BUMP THE
        NUMBER on every publish where tokens.css / bg.css / space.js change. -->
   <link rel="stylesheet" href="tokens.css?v=13" />
-  <link rel="stylesheet" href="bg.css?v=12" />
+  <link rel="stylesheet" href="bg.css?v=13" />
   <!-- Tell the browser the page is dark, so form controls, scrollbars, and
        the mobile URL bar render dark instead of a white strip on black. -->
   <meta name="color-scheme" content="dark" />
@@ -261,9 +261,24 @@
        silhouette placeholder data-URI; drop his photo in at
        images/azamat.jpg and swap the src (portrait crop, ~4:5). */
     .founder{display:flex;gap:var(--space-m);align-items:center;margin-top:var(--space-m);flex-wrap:wrap}
-    .founder-photo{flex:none;width:154px;height:192px;border-radius:4px;overflow:hidden;
-      border:1px solid var(--line);background:var(--surface-lift)}
-    .founder-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    /* Founder portrait: a circle, so it rhymes with the planet on the first
+       screen instead of sitting on the page as a hard rectangle. The photo is
+       cool-graded (partly desaturated + darkened) so warm skin tones stop
+       fighting the blue palette, and the ring/glow is kept deliberately dim —
+       it should read as the same light that falls on the sections, not as a
+       lit object of its own. */
+    .founder-photo{flex:none;width:150px;height:150px;border-radius:50%;overflow:hidden;
+      position:relative;background:var(--surface-lift);
+      box-shadow:0 0 0 1px rgba(150,178,225,.22),
+                 0 0 26px -10px rgba(138,224,244,.20),
+                 inset 0 0 22px rgba(4,8,20,.55)}
+    .founder-photo img{width:100%;height:100%;object-fit:cover;display:block;
+      filter:grayscale(.62) contrast(1.05) brightness(.86)}
+    /* The lit side catches the section's own light direction (upper right). */
+    .founder-photo::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        radial-gradient(75% 70% at 78% 12%, rgba(138,224,244,.10) 0%, rgba(138,224,244,0) 62%),
+        linear-gradient(150deg, rgba(10,26,62,.12) 0%, rgba(4,7,14,.42) 100%)}
     .founder-bio{flex:1;min-width:260px}
     .founder-name{color:var(--ink);font-weight:600;font-family:"Manrope",var(--font-display);
       margin-bottom:.5em;font-size:1.05rem}
@@ -474,7 +489,7 @@
          задачу" and it stays put while scrolling; the hero's own button is
          a duplicate on a small screen, so hide it here only. */
       .hero .cta{display:none}
-      .founder-photo{width:120px;height:150px}
+      .founder-photo{width:124px;height:124px}
     }
   </style>
 </head>
@@ -767,15 +782,15 @@
     <div class="wrap">
       <p class="eyebrow reveal">О нас</p>
       <h2 class="reveal">10 лет помогаем компаниям расти</h2>
-      <p class="lead reveal">Внедряем решения, перестраиваем процессы, ставим аналитику в основу. Работаем до результата в цифрах.</p>
+      <p class="lead reveal">Мы — амбициозная команда профессионалов. Внедряем решения, перестраиваем процессы, ставим аналитику в основу. Работаем до результата в цифрах.</p>
 
       <div class="founder reveal">
         <div class="founder-photo">
-          <img src="images/azamat.jpg" alt="Азамат Сатывалдиев" width="154" height="192" />
+          <img src="images/azamat.jpg" alt="Азамат Сатывалдиев" width="150" height="150" />
         </div>
         <div class="founder-bio">
           <p class="founder-name">Азамат Сатывалдиев, основатель компании</p>
-          <p>15+ лет в финансах, аналитике и оптимизации процессов в топ-корпорациях. Руководил внедрением ИИ в финансах в Amazon. 50+ решений для бизнеса. MBA INSEAD, кандидат экономических наук.</p>
+          <p>15+ лет в финансах, аналитике и оптимизации процессов в топ-корпорациях. Руководил внедрением ИИ в финансах в Amazon. 50+ реализованных проектов для бизнесов в РФ и мире. MBA INSEAD, кандидат экономических наук.</p>
         </div>
       </div>
     </div>
@@ -808,17 +823,21 @@
       @media(max-width:720px){.lead-form .consent{min-height:44px}}
       .lead-form button{justify-self:start;border:0;cursor:pointer}
       </style>
-      <form class="lead-form reveal" action="https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID" method="POST" data-verify="Formspree endpoint — вставьте свой ID с formspree.io">
+      <!-- FORM IS HIDDEN UNTIL IT CAN ACTUALLY WORK. Two things must land first:
+           (1) the real FormHook siteKey in the action below, and
+           (2) a completed Политика обработки ПД (privacy.html) with the operator's
+               details filled in, re-linked from the consent label and the footer.
+           A visible form posting to YOUR_SITE_KEY would fail silently and lose
+           leads, so until then the Telegram button above is the contact path.
+           TO ACTIVATE: paste the siteKey, publish the policy, delete `hidden`. -->
+      <form hidden class="lead-form reveal" action="https://app.form-hook.com/api/c1/sites/YOUR_SITE_KEY/submissions" method="POST" data-verify="FormHook siteKey + Политика обработки ПД: форму НЕ публиковать, пока не заполнены оба">
         <div class="row">
-          <input type="text" name="name" placeholder="Ваше имя" required>
-          <input type="text" name="company" placeholder="Компания">
+          <input type="text" name="name" autocomplete="name" placeholder="Ваше имя" required>
+          <input type="email" name="email" autocomplete="email" placeholder="Email" required>
         </div>
-        <div class="row">
-          <input type="tel" name="phone" placeholder="Телефон">
-          <input type="email" name="email" placeholder="Email" required>
-        </div>
+        <input type="text" name="company" autocomplete="organization" placeholder="Компания">
         <textarea name="message" placeholder="Коротко о задаче"></textarea>
-        <label class="consent"><input type="checkbox" required> Даю согласие на обработку персональных данных согласно <a href="#" data-verify="ссылка на Политику">Политике</a> (152-ФЗ).</label>
+        <label class="consent"><input type="checkbox" name="privacy_consent" value="yes" required> Даю согласие на обработку персональных данных согласно <a href="privacy.html" target="_blank" rel="noopener">Политике обработки персональных данных</a> (152-ФЗ).</label>
         <button type="submit" class="btn btn--solid btn--lg">Отправить</button>
       </form>
       <!-- Contacts. Telegram is his live handle. LinkedIn and WhatsApp
@@ -837,8 +856,9 @@
       <a href="index.html" class="logo logo--footer" aria-label="Kosmion — на главную">KOSMION</a>
       <!-- Factual as built: static pages, no analytics, no trackers, nothing
            written to the browser. Change this line if analytics get added. -->
-      <p class="cookie-note">Сайт не использует cookies и не собирает
-        данные о посетителях.</p>
+      <!-- The policy link returns here once privacy.html is filled in and published. -->
+      <p class="cookie-note">Сайт не использует cookies и не собирает данные
+        о посетителях автоматически.</p>
     </div>
   </footer>
 

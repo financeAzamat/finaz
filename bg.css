@@ -66,3 +66,95 @@
 @media(max-width:720px){
   .bg{opacity:.72}
 }
+
+/* ============================================================
+   SCROLL GRADIENT (added 2026-08-10, client request)
+   ------------------------------------------------------------
+   Replace the fixed corner washes (which read like a shaft of
+   sunlight in the top-left) with ONE clean vertical gradient
+   that spans the whole document and scrolls with it: deep navy
+   at the top of the page easing to a lighter blue at the
+   bottom, all inside the same blue family. `.bg` becomes
+   absolute+inset:0 inside a position:relative body, so it is
+   the full document height (not the viewport) and moves under
+   the content as you scroll. Kept dark enough that the light
+   (#eaf0fb) body text stays readable over every section.
+   These rules override the fixed/washed `.bg` above by source
+   order (same selector, later wins) — z-index/transform/
+   pointer-events from that rule still apply.
+   ============================================================ */
+body{position:relative}
+/* Deep void base. The LIGHT no longer lives here: each section lights itself
+   (see the terminator block below), so this layer is only the dark space they
+   sit in, with a little large-scale variation so it is not flat #000. */
+.bg{
+  position:absolute;inset:0;
+  background-color:#04060c;
+  background-image:
+    radial-gradient(90% 60% at 88% 2%,  rgba(74,134,200,.10) 0%, rgba(74,134,200,0) 62%),
+    radial-gradient(80% 60% at 6% 72%,  rgba(120,116,200,.07) 0%, rgba(120,116,200,0) 66%),
+    linear-gradient(180deg, #04060c 0%, #04070f 55%, #03050b 100%);
+}
+/* Fine grain to kill 8-bit banding and add texture — the difference between a
+   flat "cheap" gradient and a deep one. Above the gradient, below content. */
+.bg::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:140px 140px;opacity:.05;mix-blend-mode:overlay;
+}
+
+/* ============================================================
+   TERMINATOR — per-section lighting (option A, chosen 2026-08-10)
+   ------------------------------------------------------------
+   The hero lights a dark Earth from ONE direction and lets the
+   terminator fall away into shadow. Every section now repeats
+   that model instead of the page carrying one flat ramp: light
+   enters from the upper RIGHT (the same side as the globe's lit
+   limb) and shades diagonally into the lower left.
+
+   The direction never changes — one light source for the whole
+   site, so it reads as one lit object rather than decorated
+   panels. Only distance/intensity varies between sections, so
+   the effect is not stamped: every second section sits a little
+   further from the source.
+
+   Purely ADDITIVE (rgba only, no opaque stops) so the void base
+   above still shows through and the section's own alpha fill
+   (.section--alt) keeps working. The CTA band is excluded — it
+   already carries its own dedicated gradient.
+   ============================================================ */
+.section{position:relative}
+.section:not(.cta-band):not(.section--dark)::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    /* the lit limb: cool daylight entering top-right */
+    radial-gradient(125% 105% at 106% -12%,
+      rgba(150,205,255,.20) 0%,
+      rgba(96,158,226,.115) 26%,
+      rgba(40,74,140,.05) 48%,
+      rgba(6,10,22,0) 70%),
+    /* a warm sliver right at the source, as on a sunlit limb */
+    radial-gradient(85% 70% at 90% 4%,
+      rgba(255,244,222,.055) 0%, rgba(255,244,222,0) 48%),
+    /* the terminator itself: light falling away on the diagonal */
+    linear-gradient(148deg,
+      rgba(22,48,102,.28) 0%,
+      rgba(12,26,60,.15) 34%,
+      rgba(4,7,14,0) 72%);
+}
+/* Further from the light: same direction, lower intensity. */
+.section:not(.cta-band):not(.section--dark):nth-of-type(even)::before{
+  background-image:
+    radial-gradient(120% 100% at 110% -8%,
+      rgba(150,205,255,.135) 0%,
+      rgba(96,158,226,.08) 28%,
+      rgba(6,10,22,0) 68%),
+    radial-gradient(80% 66% at 94% 6%,
+      rgba(255,244,222,.035) 0%, rgba(255,244,222,0) 46%),
+    linear-gradient(152deg,
+      rgba(20,44,96,.19) 0%,
+      rgba(10,22,52,.10) 36%,
+      rgba(4,7,14,0) 74%);
+}
+/* Content must sit above the light layer. */
+.section > .wrap{position:relative;z-index:1}
